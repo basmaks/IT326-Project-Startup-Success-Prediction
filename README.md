@@ -6,6 +6,14 @@ In recent years, Saudi Arabia has emerged as an increasingly attractive hub for 
 
 ### Goal
 
-Our **goal** is to build a predictive model capable of predicting the potential success of startups. In this dataset, the **class label** we are focusing on is "**status**," which distinguishes between **successful startups (labeled as "acquired") and unsuccessful ones (labeled as "closed")**. We aspire to utilize the insights gained from this model to test and predict the possible success of startups within the region.
+In this project, our **goal** is to build a predictive model capable of predicting the potential success of startups. We aspire to utilize the insights gained from this model to test and predict the possible success of startups within the region.
+
+### General Information
+
+The dataset comprises **20 columns** and **925 rows**.
+
+The **class label** we are focusing on is "**status**," which distinguishes between **successful startups (labeled as "acquired")** and unsuccessful ones **(labeled as "closed")**.
+
+
 
 **Students:** Basma Alsulaim – Aafia Nawal Mohammed.
