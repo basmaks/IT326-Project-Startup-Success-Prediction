@@ -16,6 +16,6 @@ In this project, our **goal** is to build a predictive model capable of predicti
 
 ### General Information
 
-The dataset comprises **43 columns** and **924 rows**.
+The dataset comprises **50 columns** and **925 rows**.
 
 The **class label** we are focusing on is "**status**," which distinguishes between **successful startups (labeled as "acquired")** and unsuccessful ones **(labeled as "closed")**.
