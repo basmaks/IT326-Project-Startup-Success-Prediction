@@ -6,7 +6,7 @@
 
 ## Startup Success Prediction Model
 
-The dataset provides a comprehensive record of startup companies, tracing their early-stage decisions, such as funding rounds, categories, and more, spanning the years from 1984 to 2010. Notably, the 'status' attribute serves as a vital indicator, shedding light on the outcome of these decisions, distinguishing between productive outcomes, often leading to company acquisitions, and less favorable results that resulted in business closures.
+The "Startup Success Prediction" dataset provides a comprehensive record of startup companies, tracing their early-stage decisions, such as funding rounds, categories, and more, spanning the years from 1984 to 2010. Notably, the 'status' attribute serves as a vital indicator, shedding light on the outcome of these decisions, distinguishing between productive outcomes, often leading to company acquisitions, and less favorable results that resulted in business closures.
 
 Our objective is to luse preprocessing, classification, and clustering techniques to construct an accurate predictive model. This model is designed to foresee the potential success (as indicated by the 'status' attribute) of startup companies. Such a tool holds immense promise, offering valuable insights to both investors and job seekers. It helps investors make smarter decisions by identifying startups with a higher chance of success, and thus get a return on their investment. It also assists job seekers in finding promising companies for their careers. 
 
