@@ -20,9 +20,6 @@ Our **motivation** in building this model is for it to act as a guiding beacon f
 
 In this project, our **goal** is to build a predictive model capable of predicting the potential success of startups. We aspire to utilize the insights gained from this model to test and predict the possible success of startups within the region.
 
-##### Dataset Source
-
-Access the dataset on Kaggle through the following link: https://www.kaggle.com/datasets/manishkc06/startup-success-prediction
 
 
 ### General Information
@@ -30,3 +27,8 @@ Access the dataset on Kaggle through the following link: https://www.kaggle.com/
 The dataset comprises **50 columns** and **925 rows**.
 
 The **class label** we are focusing on is "**status**", which distinguishes between **successful startups (labeled as "acquired")** and unsuccessful ones **(labeled as "closed")**.
+
+
+#### Dataset Source
+
+Access the dataset on Kaggle through the following link: https://www.kaggle.com/datasets/manishkc06/startup-success-prediction
