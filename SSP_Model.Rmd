@@ -1,0 +1,2735 @@
+---
+title: "Startup Success Prediction Model"
+output: html_notebook
+---
+<br>
+Introduction to Data Mining (IT326) Course Project 
+**Prepared by:** Basma Alsulaim and Aafia Nawal Muhammad 
+
+## 1- Problem 
+
+&nbsp;&nbsp;&nbsp; The problem we aim to address revolves around predicting the success of startups based on historical data encompassing their early-stage decisions. The dataset provides a comprehensive record of startup companies, tracing their early-stage decisions, such as funding rounds, categories, and more, spanning the years from 1984 to 2010. We strive to build a predictive model, particularly using Decision Trees, to anticipate the outcome of startups. 
+
+&nbsp;&nbsp;&nbsp; The ability to predict startup success is important for both investors and job seekers. For investors, it serves as a strategic tool to identify startups with a higher likelihood of success, leading to more informed investment decisions and better returns. On the flip side, job seekers can benefit by identifying promising companies, increasing the likelihood of a fruitful and stable career path.<br><br><br>
+
+## 2- Data Mining Task
+
+&nbsp;&nbsp;&nbsp; The data mining task involves two key aspects: classification and clustering. In the classification part, the goal is to create a predictive model that sorts startups into 'acquired' or 'closed' categories using the class label 'status'. On the clustering part, the aim is to uncover patterns and structures within the dataset, identifying groups of startups with similar traits. This dual approach aims to provide a comprehensive understanding of startup outcomes, offering predictive insights and revealing underlying structures in the startup dataset.
+
+#### Goals:
+
+1. **Prediction:** Create a predictive model to predict if a startup will succeed or close, using past data for better decision-making.  
+
+2. **Pattern Discovery:** Find hidden patterns in startup data, helping us understand common traits among them.
+
+3. **Smart Investing:** Assist investors in making strategic decisions by identifying startups with a high chance of success, leading to better returns.<br><br><br>
+
+
+## 3- Data Description
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**◆ Source:** Access the dataset on Kaggle through the following link: https://www.kaggle.com/datasets/manishkc06/startup-success-prediction   
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**◆ Number of objects:** The dataset holds 925 rows of data before preprocessing.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**◆ Number of attributes:** The dataset holds 50 columns of data before preprocessing.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**◆ Class label:** The class label for this data set is **status**, which holdes two states: "acquired" (i.e. successful company) or "closed" (i.e. unsuccessful company).
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**◆ Types of attributes:** Nominal, Numerical, Binary<br><br>
+
+### Data Disctionary: 
+
+| Attribute Name           | Description                                                  | Type      | Possible Values                                 |
+| ------------------------ | ------------------------------------------------------------ | --------- | ----------------------------------------------- |
+| Unnamed: 0               | Method of numbering companies.                               | Nominal   | 1 to 1153                                       |
+| state_code               | The code of the state the startup was founded in.            | Nominal   | Different state codes. Like CA, AZ              |
+| latitude                 | The latitude of the startup headquarters.                    | Numerical | 90 to -90                                       |
+| longitude                | The longitude of the startup headquarters.                   | Numerical | 0 to 180                                        |
+| zip_code                 | The zip code of the city the startup was founded in.         | Nominal   | Different random city zipcodes                  |
+| id                       | Irrelevant\*                                                 | Nominal   | Data in unrecognizable format c:number          |
+| city                     | The name of the city the startup was founded in.             | Nominal   | Different cities. Like Palo Alto, Mountain View |
+| Unnamed: 6               | The address of the headquarters.                             | Nominal   | Different addresses. Like San Diego CA 92121    |
+| name                     | The name of the startup.                                     | Nominal   | Different names. Like Qsecure, drop.io          |
+| labels                   | Irrelevant\*                                                 | Binary    | 0 or 1                                          |
+| founded_at               | Startup founding date.                                       | Nominal   | 01 1984 to 09 2010                              |
+| closed_at                | Startup closing date.                                        | Nominal   | 01 2001 to 08 2013                              |
+| first_funding_at         | Startup first funding date.                                  | Nominal   | 01 2000 to 09 2009                              |
+| last_funding_at          | Startup last funding date.                                   | Nominal   | 01 2001 to 09 2011                              |
+| age_first_funding_year   | The average age of startup when received first funding.      | Numerical | 0 to 21                                         |
+| age_last_funding_year    | The average age of startup when received last funding.       | Numerical | 0 to 21                                         |
+| age_first_milestone_year | The average age of startup when acheived first milestone.    | Numerical | 0 to 24                                         |
+| age_last_milestone_year  | The average age of startup when acheived last milestone.     | Numerical | 0 to 24                                         |
+| relationships            | Irrelevant\*                                                 | Numerical | 0 to 63                                         |
+| funding_rounds           | The number of funding rounds the startup went through.       | Numerical | 1 to 10                                         |
+| funding_total_usd        | The total number of money in USD raised by the startup.      | Numerical | 11000 to 5700000000                             |
+| milestones               | The total number of milestones achieved by the startup.      | Numerical | 0 to 8                                          |
+| state_code.1             | The code of the state the startup was founded in.            | Nominal   | Different state codes. Like CA, AZ              |
+| is_CA                    | If the startup was founded in California.                    | Binary    | 0 or 1                                          |
+| is_NY                    | If the startup was founded in New York.                      | Binary    | 0 or 1                                          |
+| is_MA                    | If the startup was founded in Massachusetts.                 | Binary    | 0 or 1                                          |
+| is_TX                    | If the startup was founded in Texas.                         | Binary    | 0 or 1                                          |
+| is_otherstate            | If the startup was founded in a state other than the listed. | Binary    | 0 or 1                                          |
+| category_code            | The sector of the startup.                                   | Nominal   | Different categories. Like biotech, mobile      |
+| is_software              | If the startup sector is software.                           | Binary    | 0 or 1                                          |
+| is_web                   | If the startup sector is web.                                | Binary    | 0 or 1                                          |
+| is_mobile                | If the startup sector is mobile.                             | Binary    | 0 or 1                                          |
+| is_enterprise            | If the startup sector is enterprise.                         | Binary    | 0 or 1                                          |
+| is_advertising           | If the startup sector is advertising.                        | Binary    | 0 or 1                                          |
+| is_gamesvideo            | If the startup sector is video games.                        | Binary    | 0 or 1                                          |
+| is_ecommerce             | If the startup sector is ecommerce.                          | Binary    | 0 or 1                                          |
+| is_biotech               | If the startup sector is biotech.                            | Binary    | 0 or 1                                          |
+| is_consulting            | If the startup sector is consulting.                         | Binary    | 0 or 1                                          |
+| is_othercategory         | If the startup sector is any other category that the listed. | Binary    | 0 or 1                                          |
+| object_id                | Irrelevant\*                                                 | Nominal   | Data in unrecognizable format c:number          |
+| has_VC                   | If the startup has a venture capitalist\*\* investor.        | Binary    | 0 or 1                                          |
+| has_angel                | If the startup has an angel\*\*\* investor.                  | Binary    | 0 or 1                                          |
+| has_roundA               | If the startup went through a series A funding round.        | Binary    | 0 or 1                                          |
+| has_roundB               | If the startup went through a series B funding round.        | Binary    | 0 or 1                                          |
+| has_roundC               | If the startup went through a series C funding round.        | Binary    | 0 or 1                                          |
+| has_roundD               | If the startup went through a series D funding round.        | Binary    | 0 or 1                                          |
+| avg_participants         | The average number of participants in the startup.           | Binary    | 0 or 1                                          |
+| is_top500                | If the startup is a top 500 company.                         | Binary    | 0 or 1                                          |
+| status                   | The acquisition status of the startup.                       | Binary    | "acquired" or "closed"                          |
+
+\*The original dataset source lacks any description for these attributes. We can only speculate their meanings. They could refer to the number of data objects, a method for organizing data, or a recording system of some sort. Furthermore, since they pose no importance to the startup prediction model, we will designate them as **"irrelevant"** and proceed to remove them from the dataset in the subsequent steps. 
+
+\*\***VC** stands for Venture Capitalist. Which is a type of investor that invests the money of a venture capital firm into small startup companies.
+
+\*\*\***Angel** stands for Angel Investor. Which is a type of investor that invests their personal money  into small startup companies in exchange for a percentage in the company.<br>
+
+<br>
+### Installing necessary packages: Preprocessing and Visualization
+```{r}
+install.packages("readxl")
+install.packages("lubridate")
+install.packages("scatterplot3d") 
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("colorspace")
+install.packages("png")
+```
+<br>
+##### Load necessary packages: Classification 
+```{r}
+install.packages("partykit")
+install.packages("rpart")
+install.packages("rpart.plot")
+install.packages("ROSE")
+install.packages("caret")
+install.packages("C50")
+library(party)
+library(partykit)
+library(rpart.plot)
+library(RWeka)
+library(caret)
+library(rpart)
+library(ggplot2)
+library(lattice)
+```
+
+### Load necessary packages: Classification 
+```{r}
+install.packages("dplyr")
+install.packages("ClusterR")
+install.packages("cluster") # To make clusters
+install.packages("factoextra") # To visualize and validate the clusters
+```
+
+
+#### Import Dataset
+```{r}
+library(readxl)
+dataset <- read_excel("Original_StartupData.xlsx")
+View(dataset)
+```
+To import and load the excel dataset for data preprocessing and mining. <br><br>
+
+
+### Assessing Class Label Balance Before Pre-Processing 
+
+```{r}
+library(ggplot2)
+library(grid)
+
+# Create a bar plot for the "status" attribute
+gg <- ggplot(dataset, aes(x = status)) +
+  geom_bar(fill = "darkgray", color = "black") +
+  labs(title = "Distribution of Startup Status", x = "Status", y = "Count") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Print the plot
+print(gg)
+
+# Add an external annotation to the right side
+grid.text("1 = Acquired\n0 = Closed", x = 0.9, y = 0.92, just = c("right", "top"), gp = gpar(fontsize = 12, col = "black"))
+```
+
+As shown above, **there is a class imbalance in the class label (status)**. In the dataset, objects with acquired status are almost twice as much as objects with closed objects. This indicates that the class "acquired" is more prevalent than the class "closed" in the dataset. In later steps, this may present a challenge in training and testing the model. <br><br>
+
+### Sample of Raw Dataset and Summary:
+
+Here, we aim to explore the data of our dataset. Five-number summary, variance, missing values, and graphs are utilized to give insight into the data we are dealing with. Nominal, numerical, and binary data will be examined.<br>
+
+```{r}
+str(dataset)
+```
+Above is a snapshot of the raw dataset. The startup data is a collection of different data types.<br><br>
+
+#### A) Numerical attributes:
+
+##### i) Five-number summary:
+
+Below, a five-number summary is performed on numerical attributes to gain insights into the distribution and characteristics of the numeric data. The five number summary is represented by the minimum, first quartile (Q1), median (Q2), third quartile (Q3), and maximum of the available numeric attributes. 
+
+```{r}
+# Specify numerical attributes for the five-number summary
+numerical_attributes <- c("latitude", "longitude", 
+                          "age_first_funding_year", "age_last_funding_year", 
+                          "age_first_milestone_year", "age_last_milestone_year", 
+                          "relationships", "funding_rounds", "funding_total_usd", 
+                          "milestones", "avg_participants")
+
+# Subset the data to include only numerical attributes
+numerical_data <- dataset[, numerical_attributes]
+
+# Calculate the five-number summary
+summary_data <- summary(numerical_data)
+print(summary_data)
+```
+As demonstrated above by the five-number summary, some attributes contain negative values. Negative values in attributes related to age and longitude are illogical and likely errors. We will address this issue by removing these negative values during the data cleaning process. <br>
+
+##### ii) Variance:
+
+```{r}
+# List of numerical attributes
+numerical_attributes <- c("latitude", "longitude",
+                          "age_first_funding_year", "age_last_funding_year",
+                          "age_first_milestone_year", "age_last_milestone_year",
+                          "relationships", "funding_rounds", "funding_total_usd",
+                          "milestones", "avg_participants")
+
+# Calculate variances for numerical attributes
+variances_numerical <- sapply(dataset[, numerical_attributes], var)
+
+# Print variances for numerical attributes
+for (i in seq_along(numerical_attributes)) {
+  cat("Variance for", paste(numerical_attributes[i], ":", variances_numerical[i]), "\n")
+}
+```
+**The variance can be classified into four classes: low, moderate, high, and very high.** 
+Attributes age_first_milestone_year and age_last_milestone_year include missing values which prevents an accurate assessment of variability. 
+
+Attributes longitude, and funding_total_usd attribute demonstrates an **exceptionally high level of variability**, likely influenced by outliers or a broad range of funding values.
+
+The relationships attribute shows a **high level of variability**, indicating a wide range of values among startups.
+
+Attributes latitude and age_last_funding_year display a **moderate level of variance** with respect to the dataset. 
+
+Attributes of **low variance** are age_first_funding_year, funding_rounds, and milestones, which might be due to their minimal range resulting in a more concentrated distribution of values. Which brings us to the third numerical data assessment metric: <br>
+
+
+##### iii) Mising values:
+```{r}
+# List of numerical attributes
+numerical_attributes <- c("latitude", "longitude", "zip_code", 
+                          "age_first_funding_year", "age_last_funding_year", 
+                          "age_first_milestone_year", "age_last_milestone_year", 
+                          "relationships", "funding_rounds", "funding_total_usd", 
+                          "milestones", "avg_participants")
+
+missing_numerical_values <- sapply(dataset[, numerical_attributes], function(x) sum(is.na(x)))
+total_numerical_values <- sum(missing_numerical_values)
+
+print(total_numerical_values)
+```
+There is a total of 304 missing values in the columns of numerical attributes. We'll address this issue by removing these missing values during the data cleaning process. <br><br>
+
+#### B) Binary and Nominal Attributes:
+
+##### i) Five-number summary:
+
+Since we are addressing binary and nominal data, the five-number summary won't give us useful insights. Therefore, we won't do the five-number summary for those types of attributes. <br>
+
+##### ii) Variance:
+
+Variance cannot be performed on nominal attributes, so we will only conduct it on binary attributes. 
+
+```{r}
+# List of binary attributes
+binary_attributes <- c("is_CA", "is_NY", "is_MA", "is_TX", "is_otherstate",
+                        "is_software", "is_web", "is_mobile", "is_enterprise",
+                        "is_advertising", "is_gamesvideo", "is_ecommerce",
+                        "is_biotech", "is_consulting", "is_othercategory",
+                        "has_VC", "has_angel", "has_roundA", "has_roundB",
+                        "has_roundC", "has_roundD", "labels", "is_top500", "status")
+
+# Calculate variances for binary attributes
+variances_binary <- sapply(dataset[, binary_attributes], var)
+
+# Print variances for binary attributes
+for (i in seq_along(binary_attributes)) {
+  cat("Variance for", paste(binary_attributes[i], ":", variances_binary[i]), "\n")
+}
+```
+These values indicate how much the values in each binary attribute deviate from their mean (0.5 for balanced binary variables). Lower variances suggest that the values are closer to the mean, while higher variances indicate greater spread. Since the variance for all these binary attributes is very low, the variance indicates no further significance. 
+
+Although status is a binary attribute, it hasn't been encoded to 1 (acquired) and 0 (closed) yet. So, its variance is denoted by NA. As it seems a nominal attribute. <br>
+
+##### iii) Mising values:
+
+```{r}
+# List of attributes
+binary_nominal_attributes <- c("Unnamed: 0", "state_code", "id", "zip_code", "city", "Unnamed: 6",
+                          "name", "founded_at", "closed_at", "first_funding_at",
+                          "last_funding_at", "state_code.1", "category_code",
+                          "object_id", "is_CA", "is_NY", "is_MA", "is_TX", "is_otherstate",
+                          "is_software", "is_web", "is_mobile", "is_enterprise",
+                          "is_advertising", "is_gamesvideo", "is_ecommerce",
+                          "is_biotech", "is_consulting", "is_othercategory",
+                          "has_VC", "has_angel", "has_roundA", "has_roundB",
+                          "has_roundC", "has_roundD", "labels", "is_top500", "status")
+
+missing_binary_nominal_values <- sapply(dataset[, binary_nominal_attributes], function(x) sum(is.na(x)))
+total_binary_nominal_values <- sum(missing_binary_nominal_values)
+
+print(total_binary_nominal_values)
+```
+There is a total of 1082 missing values in the columns of binary and nominal attributes. We'll address this issue by removing these missing values during the data cleaning process. <br>
+
+
+##### Detecting and Dealing With Missing Values 
+
+We will detect and eliminate missing values in the dataset to ensure the creation of representative graphs, as plotting requires addressing missing values first.
+
+```{r}
+sum(is.na(dataset))
+```
+There is a total of 1386 missing values in the startup dataset. 
+
+```{r}
+# Calculate the sum of missing values for each attribute
+sum_missing_values <- function(attribute) {
+  sum(is.na(attribute))
+}
+
+# Apply the function to each attribute and store the results in a data frame
+missing_values <- data.frame(
+  Attribute = names(dataset),
+  Missing_Values = sapply(dataset, sum_missing_values)
+)
+
+# Print the result
+print(missing_values)
+```
+
+The table above shows each attribute with the number of missing values found in its column. All missing values come from five attributes, ordered from most missing to least: closed_at, Unnamed: 6, age_first_milestone_year, 	age_last_milestone_year, and 	state_code.1. 
+
+#### Replacing Missing Values
+
+For attribute closed_at and state_code.1, we will fill all missing values with the global constant N/A because information about the operation of the company (whether is is still open or closed) remains unknown and cannot be replaced with the average as the company may still be operating. 
+
+Note: state_code.1 is a duplicate attribute. Unnamed: 6 is an irrelevant attribute as explained at the beginning of this section. Both state_code.1 and Unnamed: 6 will be removed in the data reduction step. 
+
+#### Before replacing missing values of attribute closed_at with N/A:
+```{r}
+head(dataset$closed_at)
+```
+As shown in the table above, missing values are automatically denoted as "NA" in R. 
+
+#### Replacing with "N/A":
+```{r}
+dataset$closed_at[is.na(dataset$closed_at)] <- "N/A"
+dataset$state_code.1[is.na(dataset$state_code.1)] <- "N/A"
+dataset$'Unnamed: 6'[is.na(dataset$'Unnamed: 6')] <- "N/A"
+```
+This code chunk replaces all missing values in attribute closed_at with N/A.
+
+#### After replacing missing values of attribute closed_at with N/A:
+```{r}
+head(dataset$closed_at)
+```
+As shown in the table above, missing values are replaced with global constant "N/A". 
+
+
+For attributes age_first_milestone_year and age_last_milestone_year we will replace missing values with the attribute's mean. <br>
+
+#### Before replacing missing values of attributes age_first_milestone_year and age_last_milestone_year with average:
+```{r}
+row_13 <- dataset[13, c("age_first_milestone_year", "age_last_milestone_year")]
+
+# Display the result
+print(row_13)
+```
+As shown in row 13 of the dataset, missing values are automatically denoted as "NA" in R. 
+
+#### Replacing with average:
+```{r}
+dataset$age_first_milestone_year = ifelse (is.na(dataset$age_first_milestone_year), ave(dataset$age_first_milestone_year, FUN=function(x)mean(x,na.rm=TRUE)), dataset$age_first_milestone_year)
+
+dataset$age_last_milestone_year = ifelse (is.na(dataset$age_last_milestone_year), ave(dataset$age_last_milestone_year, FUN=function(x)mean(x,na.rm=TRUE)), dataset$age_last_milestone_year)
+```
+This code chunk replaces all missing values of attributes age_first_milestone_year and age_last_milestone_year with their average.
+
+#### After replacing missing values of attributes age_first_milestone_year and age_last_milestone_year with average:
+```{r}
+row_13 <- dataset[13, c("age_first_milestone_year", "age_last_milestone_year")]
+
+# Display the result
+print(row_13)
+```
+As shown in row 13 of the dataset, missing values are replaced with the attribute average. 
+
+#### Check for remaining missing values:
+```{r}
+sum(is.na(dataset))
+```
+All missing values are addressed. There are no remaining missing values. 
+
+
+### Graphical Representation of the Dataset ( Before ) Data Pre-Processing 
+<br>
+
+#### A) Numerical Attributes Histogram:
+```{r}
+
+```
+
+```{r}
+# Load the required libraries
+library(ggplot2)
+
+# Select numerical attributes for histograms
+numerical_attributes <- c("latitude", "longitude",
+                           "age_first_funding_year", "age_last_funding_year",
+                           "age_first_milestone_year", "age_last_milestone_year",
+                           "relationships", "funding_rounds", "funding_total_usd",
+                           "milestones", "avg_participants")
+
+# Melt the dataset for easier plotting
+melted_data <- reshape2::melt(dataset[, numerical_attributes])
+
+# Create histogram with facet wrap
+histogram_plot_numerical_before <- ggplot(melted_data, aes(x = value)) +
+  geom_histogram(binwidth = 1, fill = "darkgray", color = "black") +
+  facet_wrap(~variable, scales = "free") +
+  labs(title = "Histogram for Numerical Attributes BEFORE Pre-processing", x = "Value", y = "Frequency") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Display the plot
+par(mfrow = c(1, 2))  # Set up a 1x2 plotting grid
+plot(histogram_plot_numerical_before)  # Plot the original graph
+```
+In the collection of histograms above, we can see that there is a noticeable distribution among values of certain attributes. As shown, "funding_total_usd" is not appearing as expected, it could be due to the presence of extreme values or outliers that are affecting the visualization. The graphs above indicate that we must remove outliers and deal with negative values. 
+
+```{r}
+# Assuming your dataset is named 'your_dataset'
+# Replace 'your_dataset' with the actual name of your dataset
+
+# Select numerical attributes for histograms
+numerical_attributes <- c("latitude", "longitude",
+                           "age_first_funding_year", "age_last_funding_year",
+                           "age_first_milestone_year", "age_last_milestone_year",
+                           "relationships", "funding_rounds", "funding_total_usd",
+                           "milestones", "avg_participants")
+
+# Melt the dataset for easier plotting
+melted_data <- reshape2::melt(dataset[, numerical_attributes])
+
+# Create histogram with facet wrap, log-transforming funding_total_usd
+histogram_plot <- ggplot(melted_data, aes(x = log(value + 1))) +
+  geom_histogram(binwidth = 0.2, fill = "darkgray", color = "black") +
+  facet_wrap(~variable, scales = "free") +
+  labs(title = "Histogram for Numerical Attributes BEFORE Pre-processing",
+       x = "Log(Value + 1)",
+       y = "Frequency")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Display the plot
+print(histogram_plot)
+```
+Here, we fixed the issue regarding the "funding_total_usd" graph. We used the log(value + 1) to log-transform the "funding_total_usd" values. Although the "funding_total_usd" graph appeared, we have eliminated negative values. This indicates that the graphical representation above is not an accurate representation of the raw numerical attributes but an estimate of one. <br>
+
+#### B) Nominal Attributes Barplot:
+
+Attributes Unnamed: 0, id, zip_code, Unnamed: 6, object_id are used for identification purposes and do not have mathematical significance. And since they are unique unrepetitive strings of numbers, a barplot is not necessary to represent them. In addition, they will be removed later in the data reduction step. 
+
+Moreover, attributes founded_at,	closed_at,	first_funding_at, and	last_funding_at represent dates in the format mm/yy/dd. We can say that they are semi-unique since the probability of two rows sharing the same date is extremely low and holds no significance. Therefore, no barplot is necessary to represent them.  
+
+```{r}
+library(tidyr)
+
+# Selecting specific columns for visualization
+columns_to_visualize <- dataset[, c("state_code", "city", "category_code", "state_code.1")]
+
+# Melt the required columns for visualization
+melted_data_before <- gather(data = columns_to_visualize)
+
+# Plotting bar graphs for the specified attributes and facet_wrap
+barplot_nominal_before <- ggplot(melted_data_before, aes(x = value, fill = key)) +
+  geom_bar(position = "dodge", stat = "count", color = "black", fill = "darkgray") +
+  facet_wrap(~key, scales = "free") +
+  labs(title = "Nominal Attributes BEFORE Pre-processing", x = "Values", y = "Count") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Displaying the plot
+print(barplot_nominal_before)
+```
+From the graphs, we can see that state_code and state_code.1 are redundant which requires the elimination of one of them later in the data reduction step. In addition, we can see which state code, city, and category code most startups shared. 
+
+Attributes Unnamed: 0, id, zip_code, Unnamed: 6, and object_id cannot be plotted as they are unique attributes. They pertain no significance to the dataset and will be removed later on in data reduction. <br> 
+
+#### C) Binary Attributes Barplot:
+
+```{r}
+library(tidyr)
+
+# List of binary attributes
+binary_attributes <- c("is_CA", "is_NY", "is_MA", "is_TX", "is_otherstate", 
+                       "is_software", "is_web", "is_mobile", "is_enterprise", 
+                       "is_advertising", "is_gamesvideo", "is_ecommerce", 
+                       "is_biotech", "is_consulting", "is_othercategory", 
+                       "has_VC", "has_angel", "has_roundA", "has_roundB", 
+                       "has_roundC", "has_roundD", "labels", "is_top500", "status")
+
+# Melt the datasets for easier plotting
+melted_data <- gather(dataset, key = "variable", value = "value", all_of(binary_attributes))
+
+# Create bar plots with facet wrap
+barplot_binary_before <- ggplot(melted_data, aes(x = value, fill = variable)) +
+  geom_bar(position = "dodge", stat = "count", color = "black", fill = "darkgray") +
+  facet_wrap(~variable, scales = "free") +
+  labs(title = "Bar Plots for Binary Attributes BEFORE Pre-processing", x = "Value", y = "Count") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Display the plot
+print(barplot_binary_before)
+```
+The barplots provide insights into the startup landscape from 1984 to 2010, revealing trends such as the states with the highest startup activity, the most prevalent category types, preferred investment rounds, the likelihood of a startup becoming a top 500 company, and their overall status.<br><br><br>
+
+
+## 4-Data Pre-processing 
+
+Data pre-procesing is essential in producing accurate results. Because correct pre-processing leads to correct results, and vice versa. We will prepare the startup data for data mining by following the data pre-processing steps: 
+1-Data Cleaning 
+2-Data Integration
+3-Data Reduction
+4-Data Transformation
+<br><br>
+
+## 4.1-Data Cleaning 
+
+In data cleaning we are ensuring accuracy and reliability by identifying replacing negative values and removing outliers from the dataset. <br>
+
+### A) Negative Values
+
+Negative values in attributes related to age and longitude do not make sense. So, we are going to remove the negative sign from the values. 
+
+##### Before removing negative sign of attributes age_first_funding_year, age_last_funding_year, age_first_milestone_year, age_last_milestone_year, and longitude:
+```{r}
+row_235 <- dataset[235, c("longitude", "age_first_funding_year", "age_last_funding_year", "age_first_milestone_year", "age_last_milestone_year")]
+
+# Display the result
+print(row_235)
+```
+As depicted, attributes above contain negative values. 
+
+##### Removing negative values:
+```{r}
+# Remove the negative sign from age_first_funding_year
+dataset$age_first_funding_year <- abs(dataset$age_first_funding_year)
+
+# Remove the negative sign from age_last_funding_year
+dataset$age_last_funding_year <- abs(dataset$age_last_funding_year)
+
+# Remove the negative sign from age_first_milestone_year
+dataset$age_first_milestone_year <- abs(dataset$age_first_milestone_year)
+
+# Remove the negative sign from age_last_milestone_year
+dataset$age_last_milestone_year <- abs(dataset$age_last_milestone_year)
+
+# Remove the negative sign from longitude
+dataset$longitude <- abs(dataset$longitude)
+```
+This code chunk removes the negative sign from the attributes. 
+
+##### After removing negative sign of attributes age_first_funding_year, age_last_funding_year, age_first_milestone_year, age_last_milestone_year, and longitude:
+```{r}
+row_235 <- dataset[235, c("longitude", "age_first_funding_year", "age_last_funding_year", "age_first_milestone_year", "age_last_milestone_year")]
+
+# Display the result
+print(row_235)
+```
+As shown, none of the attributes above have a negative sign as they have all become positive numbers. <br>
+
+
+### B) Outliers 
+
+We will identify and eliminate outliers present in the numerical attributes of the dataset. Outliers, or data points that significantly deviate from the majority, can skew statistical analyses and affect the accuracy of models. By detecting and removing these outliers, we aim to ensure a more robust and representative dataset for subsequent analyses.
+
+Binary and nominal attributes, are discrete and categorical. They don't exhibit outliers as numerical values do. Outliers are specific to numerical data where values significantly deviate from the rest of the dataset. In the case of binary attributes, these represent two categories (0 or 1), so there aren't outliers as there's no numerical range or sequence to measure extremes. For nominal attributes, which represent categories without inherent order (like names) outliers don't exist in the same sense as they do in numerical data. Outliers in numerical data might suggest errors, anomalies, or extremes in the data. 
+
+##### Numerical Attribute Boxplots Before Removing Outliers:
+
+```{r}
+library(ggplot2)
+
+# Select numerical attributes for boxplots
+numerical_attributes <- c("latitude", "longitude",
+                           "age_first_funding_year", "age_last_funding_year",
+                           "age_first_milestone_year", "age_last_milestone_year",
+                           "relationships", "funding_rounds", "funding_total_usd",
+                           "milestones", "avg_participants")
+
+# Melt the dataset for easier plotting
+melted_data <- reshape2::melt(dataset[, numerical_attributes])
+
+# Create boxplots with facet wrap
+boxplot_plot <- ggplot(melted_data, aes(x = variable, y = value)) +
+  geom_boxplot(fill = "darkgray", color = "black") +
+  facet_wrap(~variable, scales = "free") +
+  labs(title = "Boxplots for Numerical Attributes Before Removing Outliers",
+       x = "Attribute",
+       y = "Value") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Display the plot
+print(boxplot_plot)
+
+```
+The box represents the interquartile range (IQR), which is the range between the first quartile (Q1) and the third quartile (Q3). The length of the box indicates the spread of the middle 50% of the data. The whiskers extend from the box to the minimum and maximum values within a certain range. By default, this range is 1.5 times the IQR. Points beyond the whiskers are outliers. As demonstrated above, every boxplot contains outliers that fall beyond the whiskers represented by individual points. 
+
+##### Overview of outliers: 
+
+```{r}
+# Attributes to check for outliers
+attributes_to_check <- c("latitude", "longitude", "age_first_funding_year", 
+                         "age_last_funding_year", "age_first_milestone_year", 
+                         "age_last_milestone_year", "relationships", "funding_rounds", 
+                         "funding_total_usd", "milestones", "avg_participants")
+
+# Calculate the number of outliers for each attribute
+outlier_counts <- sapply(attributes_to_check, function(attr) {
+  Q1 <- quantile(dataset[[attr]], 0.25, na.rm = TRUE)
+  Q3 <- quantile(dataset[[attr]], 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  sum(dataset[[attr]] < lower_bound | dataset[[attr]] > upper_bound, na.rm = TRUE)
+})
+
+# Create a table with attribute names and their respective outlier counts
+outlier_table <- data.frame(Attribute = attributes_to_check, Outlier_Count = outlier_counts)
+print(outlier_table)
+```
+The table above represents the number of outliers for each attribute. 
+
+
+##### Removing Outliers: 
+
+```{r}
+## age_first_funding_year
+
+# Calculate the quartiles
+Q1 <- quantile(dataset$age_first_funding_year, 0.25)
+Q3 <- quantile(dataset$age_first_funding_year, 0.75)
+
+# Calculate the IQR
+IQR <- Q3 - Q1
+
+# Define the lower and upper bounds for outliers
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+
+# Remove outliers from the dataset using dplyr
+library(dplyr)
+
+dataset_clean1 <- dataset %>%
+  filter(age_first_funding_year >= lower_bound, age_first_funding_year <= upper_bound)
+
+# Print the dimensions of the cleaned dataset
+cat("funding_total_usd","\n")
+cat("Original dataset dimensions: ", dim(dataset), "\n")
+cat("Cleaned dataset dimensions: ", dim(dataset_clean1), "\n","\n")
+dataset <- dataset_clean1
+
+#################################
+## age_last_funding_year
+
+Q1 <- quantile(dataset$age_last_funding_year, 0.25)
+Q3 <- quantile(dataset$age_last_funding_year, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+library(dplyr)
+dataset_clean2 <- dataset %>%
+  filter(age_last_funding_year >= lower_bound, age_last_funding_year <= upper_bound)
+
+cat("age_last_funding_year","\n")
+cat("Original dataset dimensions: ", dim(dataset), "\n")
+cat("Cleaned dataset dimensions: ", dim(dataset_clean2), "\n","\n")
+dataset <- dataset_clean2
+
+#################################
+## age_first_milestone_year
+
+Q1 <- quantile(dataset$age_first_milestone_year, 0.25)
+Q3 <- quantile(dataset$age_first_milestone_year, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+library(dplyr)
+dataset_clean3 <- dataset %>%
+  filter(age_first_milestone_year >= lower_bound, age_first_milestone_year <= upper_bound)
+
+cat("age_first_milestone_year","\n")
+cat("Original dataset dimensions: ", dim(dataset), "\n")
+cat("Cleaned dataset dimensions: ", dim(dataset_clean3), "\n","\n")
+dataset <- dataset_clean3
+
+#################################
+## age_last_milestone_year
+
+Q1 <- quantile(dataset$age_last_milestone_year, 0.25)
+Q3 <- quantile(dataset$age_last_milestone_year, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+library(dplyr)
+dataset_clean4 <- dataset %>%
+  filter(age_last_milestone_year >= lower_bound, age_last_milestone_year <= upper_bound)
+
+cat("age_last_milestone_year","\n")
+cat("Original dataset dimensions: ", dim(dataset), "\n")
+cat("Cleaned dataset dimensions: ", dim(dataset_clean4), "\n","\n")
+dataset <- dataset_clean4
+
+#################################
+## relationships
+
+Q1 <- quantile(dataset$relationships, 0.25)
+Q3 <- quantile(dataset$relationships, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+library(dplyr)
+dataset_clean5 <- dataset %>%
+  filter(relationships >= lower_bound, relationships <= upper_bound)
+
+cat("relationships","\n")
+cat("Original dataset dimensions: ", dim(dataset), "\n")
+cat("Cleaned dataset dimensions: ", dim(dataset_clean5), "\n","\n")
+dataset <- dataset_clean5
+
+#################################
+## funding_rounds
+
+Q1 <- quantile(dataset$funding_rounds, 0.25)
+Q3 <- quantile(dataset$funding_rounds, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+library(dplyr)
+dataset_clean6 <- dataset %>%
+  filter(funding_rounds >= lower_bound, funding_rounds <= upper_bound)
+
+cat("funding_rounds","\n")
+cat("Original dataset dimensions: ", dim(dataset), "\n")
+cat("Cleaned dataset dimensions: ", dim(dataset_clean6), "\n","\n")
+dataset <- dataset_clean6
+
+#################################
+## funding_total_usd
+
+Q1 <- quantile(dataset$funding_total_usd, 0.25)
+Q3 <- quantile(dataset$funding_total_usd, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+library(dplyr)
+dataset_clean7 <- dataset %>%
+  filter(funding_total_usd >= lower_bound, funding_total_usd <= upper_bound)
+
+cat("funding_total_usd","\n")
+cat("Original dataset dimensions: ", dim(dataset), "\n")
+cat("Cleaned dataset dimensions: ", dim(dataset_clean7), "\n","\n")
+dataset <- dataset_clean7
+
+#################################
+## milestones
+
+Q1 <- quantile(dataset$milestones, 0.25)
+Q3 <- quantile(dataset$milestones, 0.75)
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+library(dplyr)
+dataset_clean8 <- dataset %>%
+  filter(milestones >= lower_bound, milestones <= upper_bound)
+
+cat("milestones","\n")
+cat("Original dataset dimensions: ", dim(dataset), "\n")
+cat("Cleaned dataset dimensions: ", dim(dataset_clean8), "\n","\n")
+
+dataset <- dataset_clean8
+```
+This code chunk removes outlier numerical values from a dataset, keeping only data points within the normal range in the dataset.
+
+```{r}
+nrow(dataset)
+ncol(dataset)
+```
+After removing outliers, there are 724 rows and 49 columns remaining in the dataset. 
+
+##### Numerical Attribute Boxplots After Removing Outliers:
+
+```{r}
+library(ggplot2)
+
+# Select numerical attributes for boxplots
+numerical_attributes <- c("latitude", "longitude",
+                           "age_first_funding_year", "age_last_funding_year",
+                           "age_first_milestone_year", "age_last_milestone_year",
+                           "relationships", "funding_rounds", "funding_total_usd",
+                           "milestones", "avg_participants")
+
+# Melt the dataset for easier plotting
+melted_data <- reshape2::melt(dataset[, numerical_attributes])
+
+# Create boxplots with facet wrap
+boxplot_plot <- ggplot(melted_data, aes(x = variable, y = value)) +
+  geom_boxplot(fill = "darkgray", color = "black") +
+  facet_wrap(~variable, scales = "free") +
+  labs(title = "Boxplots for Numerical Attributes After Removing Outliers",
+       x = "Attribute",
+       y = "Value") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Display the plot
+print(boxplot_plot)
+
+```
+By removing the extreme values, the new range encompasses a larger spread of the data compared to the original range with outliers. The distribution appears more compact and less skewed. However, this change might not always lead to an increase in the actual data values or the total range but rather a change in the scale of the visualization due to the removal of the extreme values. <br><br>
+
+
+
+## 4.2-Data Integration
+
+In data integration we are creating a unified view by combining information from diverse sources. 
+Since all of our data is contained in one dataset and we are not adding two or more columns together, there is no need for the data integration step. <br><br>
+
+
+
+## 4.3-Data Reduction
+
+In the data reduction step, we are enhancing efficiency and model performance by minimizing data size, focusing on relevant features, and mitigating the risk of overfitting. We will conduct the chi-squared test, check for duplication, and remove redundancy. <br>
+
+### A) Elimination of Duplicates
+
+#### Duplicate columns 
+
+```{r}
+names(dataset)
+```
+There are no duplicated columns as each attribute is unique. 
+
+#### Duplicate rows 
+
+```{r}
+sum(duplicated(dataset))
+```
+There is one duplicated row in the dataset that we must eliminate. 
+
+
+```{r}
+duplicated(dataset)
+```
+The duplicated row is in row 653.
+
+```{r}
+dataset[653, ]
+```
+From the table we can find the company name of the duplicate row to verify its duplication. 
+
+```{r}
+redwood_systems_rows <- dataset[dataset$name == "Redwood Systems", ]
+print(redwood_systems_rows)
+```
+There are two rows dedicated to "Redwood Systems". This shows that row 653 is indeed a duplicate. Therefore, we must eliminate it. 
+
+##### Remove Duplicated Rows:
+```{r}
+dataset <- unique(dataset)
+```
+This code chunk removes duplicated rows. 
+
+##### Verify the Elimination of  Duplicates:
+```{r}
+sum(duplicated(dataset))
+```
+The duplicated row is removed.<br>
+
+
+### B) Chi-squared Test
+
+The chi-square test aids in feature selection by examining the independence between categorical attributes. It helps eliminate attributes that showcase a significant relationship between one another. 
+
+#### Relationship Between labels and status 
+```{r}
+contingency_table <- table(dataset$labels, dataset$status)
+chi_square_result <- chisq.test(contingency_table)
+print(chi_square_result)
+```
+The performed Chi-squared test demonstrates a substantial association between the ‘labels’ and ‘status’ columns. The obtained p-value, which is less than 2e-16, suggests a **statistically significant correlation**. Status and labels are **dependent on one another. So, we can eliminate one of them**. We choose to eliminate labels and keep status which is the class label. Labels might be the encoded version of status. <br>
+
+#### Relationship Between zip_code and city 
+```{r}
+contingency_table <- table(dataset$zip_code, dataset$city)
+chi_square_result <- chisq.test(contingency_table)
+print(chi_square_result)
+```
+This code chunk conducts the chi-squared test for attributes zip_code and city. With the results shown, we can interpret that zip_code and city have a **significant correlation** between them. In other words, **they are dependent on one another. So, we can eliminate one of them**. We chose to eliminate zip_code and keep city. Because city constitutes a part of the attribute Unnammed: 6, and if we want to delete column Unnamed: 6 we must keep city.<br>
+
+
+#### C) Elimination of Redundant Attributes
+
+##### Before Attribute Elimination:
+
+```{r}
+ncol(dataset)
+```
+There are 49 columns in the dataset. 
+
+```{r}
+names(dataset)
+```
+Unnamed: 0, latitude, longitude, zip_code, state_code.1, id, Unnamed: 6, and object_id are existing attributes in the dataset. 
+
+The chi-squared test showed us that zip_code and city are highly correlated. As a result, we can delete one of them and keep the other. 
+
+Attributes Unnamed: 0, id, Unnamed: 6, and object_id are irrelevant to this data mining task. As discussed in section 2, the original reference provides no justification on their usage. Therefore, they are unimportant and can be eliminated. 
+
+Latitude and longitude attributes are "accessory" attributes with no real impact on the dataset. Deleting them will simplify the later steps.
+
+State_code and state_code.1 are duplicates. Only one has to remain to prevent redundancy. 
+
+
+| Attribute(s)                  | Keep               | Remove     | Why                                     |
+| ----------------------------- | ------------------ | ---------- | --------------------------------------- |
+| Unnamed: 0                    | don't keep         | Unnamed: 0 | Irrelevant                              |   
+| state_code, state_code.1      | state_code         | state_code.1 | Duplicate attribute                   |
+| latitude                      | don't keep         | latitude   | Unimportant                             |
+| longitude                     | don't keep         | longitude  | Unimportant                             |
+| zip_code, city                | city               | zip_code   | Dependent attributes (chi-squared test) |
+| id                            | don't keep         | id         | Irrelevant                              |
+| labels, status                | status             | labels     | Dependent attributes (chi-squared test) |
+| Unnamed: 6, city, state_code.1| city, state_code.1 | Unnamed:6  | Redundant attribute                     |
+| object_id                     | don't keep         | object_id  | Irrelevant                              |
+
+##### Redundant Attribute Elimination:
+```{r}
+# Create a list of column names to remove
+columns_to_remove <- c("Unnamed: 0", "state_code.1", "latitude", "longitude", "zip_code", "id", "Unnamed: 6", "labels", "object_id")
+
+# Remove the specified columns from the dataset
+dataset <- dataset[, !names(dataset) %in% columns_to_remove]
+```
+This code chunk removes all attributes redundant, irrelevant, and unimportant from the dataset.
+
+##### After Attribute Elimination:
+
+```{r}
+ncol(dataset)
+```
+There are 40 columns in the dataset. 
+
+```{r}
+names(dataset)
+```
+Unnamed: 0, latitude, longitude, zip_code, state_code.1, id, Unnamed: 6, and object_id do not exist in the dataset. <br><br>
+
+
+## 4.4-Data Transformation
+
+In data transformation, we are preparing data for analysis and modeling through flooring, normalization, and encoding techniques. <br>
+
+#### A) Flooring Attributes 
+
+Flooring data, an essential aspect of data transformation, is crucial for various analytical and modeling processes. It facilitates the conversion of continuous numerical attributes into discrete values by rounding down to the nearest whole number. This technique is vital in simplifying complex numerical data, making it more manageable and easier to interpret.
+
+##### Attributes Before Flooring:
+```{r}
+# Selecting the specific columns for the first row
+first_row <- dataset[1, c("age_first_funding_year", "age_last_funding_year",
+                          "age_first_milestone_year", "age_last_milestone_year",
+                          "relationships", "funding_rounds", "funding_total_usd",
+                          "milestones", "avg_participants")]
+# Printing the first row
+print(first_row)
+```
+As shown above, the attributes contain continuous values before flooring. 
+
+##### Flooring: 
+```{r}
+# Columns to floor
+cols_to_floor <- c("age_first_funding_year", "age_last_funding_year",
+                   "age_first_milestone_year", "age_last_milestone_year",
+                   "relationships", "funding_rounds", "funding_total_usd",
+                   "milestones", "avg_participants")
+
+# Applying floor to specified columns
+dataset[cols_to_floor] <- lapply(dataset[cols_to_floor], floor)
+```
+This code chunk floors attributes from continuous to discrete numbers. 
+
+##### Attributes After Flooring:
+```{r}
+# Selecting the specific columns for the first row
+first_row <- dataset[1, c("age_first_funding_year", "age_last_funding_year",
+                          "age_first_milestone_year", "age_last_milestone_year",
+                          "relationships", "funding_rounds", "funding_total_usd",
+                          "milestones", "avg_participants")]
+# Printing the first row
+print(first_row)
+```
+After flooring, the attributes are now discrete instead of continuous.<br><br>
+
+
+#### B) Normalization 
+
+We are going to normalize the numerical attribute funding_total_usd using min-max normalization. Numbers should fall between 0 and 1 (inclusive).<br> 
+
+##### funding_total_usd Before Normalization: 
+```{r}
+# Selecting the specific columns for the first row
+first_row <- dataset[1, c("funding_total_usd")]
+# Printing the first row
+print(first_row)
+```
+The table above shows an unnormalized value from the funding_total_usd attribute. <br>
+
+##### Normalization: 
+```{r}
+normalize <- function(x) {return ((x - min(x)) / (max(x) - min(x)))}
+dataset$funding_total_usd<-normalize(dataset$funding_total_usd)
+```
+This code chunk normalizes attribute funding_total_usd using min-max normalization. <br>
+
+##### funding_total_usd After Normalization:
+```{r}
+# Selecting the specific columns for the first row
+first_row <- dataset[1, c("funding_total_usd")]
+# Printing the first row
+print(first_row)
+```
+The table above shows a normalized value from the funding_total_usd attribute. 
+
+```{r}
+min_value <- min(dataset$funding_total_usd)
+max_value <- max(dataset$funding_total_usd)
+
+# Print the results with labels
+cat("The min is:", min_value, "\n")
+cat("The max is:", max_value)
+```
+In the min-max normalization of attribute funding_total_usd, the minimum is 0 while the max is 1. 
+
+```{r}
+# Find row index for minimum and maximum funding_total_usd
+min_row <- which.min(dataset$funding_total_usd)
+max_row <- which.max(dataset$funding_total_usd)
+
+# Print rows with minimum and maximum funding_total_usd along with name and status
+print(dataset[min_row, c('name', 'funding_total_usd', 'status')])
+
+print(dataset[max_row, c('name', 'funding_total_usd', 'status')])
+```
+In both tables, we can verify that the min-max normalization was successful. The first table shows the row with minimum normalization and the second table shows the row with maximum normalization.<br><br>
+
+#### C) Encoding 
+
+Here, we will encode attributes to simplify analysis. The attributes to encode are:
+
+i) Date attributes: founded_at, closed_at, first_funding_at, last_funding_at
+
+ii) Class label: status
+
+iii) Categorical attributes: state_code, category_code, and city
+
+iv) Unique attribute: name
+
+
+##### Attributes Before Encoding:
+```{r}
+dataset[3, c("state_code", "city", "name", "founded_at", "closed_at", "first_funding_at", "last_funding_at", "category_code", "status")]
+```
+Attributes appearing in their original format. 
+
+
+### i) Encoding Date Attributes: founded_at, closed_at, first_funding_at, last_funding_at
+```{r}
+dataset$founded_at <- gsub("/", "", dataset$founded_at)
+dataset$closed_at <- gsub("/", "", dataset$closed_at)
+dataset$first_funding_at <- gsub("/", "", dataset$first_funding_at)
+dataset$last_funding_at <- gsub("/", "", dataset$last_funding_at)
+
+dataset$founded_at <- substr(dataset$founded_at, nchar(dataset$founded_at) - 3, nchar(dataset$founded_at))
+dataset$closed_at <- substr(dataset$closed_at, nchar(dataset$closed_at) - 3, nchar(dataset$closed_at))
+dataset$first_funding_at <- substr(dataset$first_funding_at, nchar(dataset$first_funding_at) - 3, nchar(dataset$first_funding_at))
+dataset$last_funding_at <- substr(dataset$last_funding_at, nchar(dataset$last_funding_at) - 3, nchar(dataset$last_funding_at))
+
+dataset$founded_at <- as.numeric(dataset$founded_at)
+dataset$closed_at <- as.numeric(dataset$closed_at)
+dataset$first_funding_at <- as.numeric(dataset$first_funding_at)
+dataset$last_funding_at <- as.numeric(dataset$last_funding_at)
+```
+This code chunk converts attributes founded_at, closed_at, first_funding_at, last_funding_at from date format mm/dd/yyyy to numerical numbers. 
+
+
+### ii) Encoding Categorical Attributes: state_code, category_code, and city 
+```{r}
+library(caret)
+library(dplyr)
+library(lattice)
+
+# Columns to be encoded
+attributes_to_encode <- c("state_code", "category_code", "city")
+
+# Loop through each attribute for encoding
+for (attribute in attributes_to_encode) {
+  # Use caret's method for encoding
+  dataset[[attribute]] <- as.factor(dataset[[attribute]])
+  dataset[[attribute]] <- as.numeric(dataset[[attribute]])
+}
+```
+
+This code chunk creates from each of the selected columns a new column that holds a frequency-encoded version of the attributes values. Rows that share the same value of the attribute have the same encoding. 
+
+
+### iii) Ecoding Unique Attribute: name
+```{r}
+# Replace each unique category with a numerical label
+dataset$name <- as.numeric(factor(dataset$name, levels = unique(dataset$name)))
+```
+Creates a new column for the encoded unique values of the attribute name. 
+
+
+### iv) Encoding Class Label: status
+```{r}
+dataset$status <- ifelse(dataset$status == "acquired", 1, 0)
+```
+Encodes status attribute to 1 for acquired status and 0 for closed status. 
+
+
+##### Attributes After Encoding:
+```{r}
+dataset[3, c("state_code", "city", "name", "founded_at", "closed_at", "first_funding_at", "last_funding_at", "category_code", "status")]
+```
+Attributes founded_at, closed_at, first_funding_at, and last_funding_at appear in the encoded ( mm-yyyy ) form. Attribute status appear in 1 (for acquired) and 0 (for closed) form. 
+
+### Downloading the Pre-processed Dataset 
+
+```{r}
+library(writexl)
+
+# Assuming your preprocessed dataset is named 'dataset'
+write_xlsx(dataset, path = "Preprocessed_StartupData.xlsx")
+preprocessed_dataset <- read_excel("Preprocessed_StartupData.xlsx")
+```
+To save the pre-processing work and use it later in classification and clustering. 
+
+## Comparison of Attributes Before vs After Pre-processing
+
+After preprocessing, the data undergoes transformation that can include cleaning, normalization, encoding, and more, resulting in a refined dataset more amenable to analysis, reducing noise, and enhancing the accuracy of the learningmodels.
+
+First, we will check the number or columns and attributes after pre-processing. 
+
+```{r}
+# Number of columns
+num_cols <- ncol(dataset)
+# Number of attributes
+num_attrs <- nrow(dataset)
+
+# Print the values
+cat("Number of columns:", num_cols, "\n")
+cat("Number of attributes:", num_attrs, "\n")
+```
+There are 40 columns and 727 rows. 
+
+Then, we will observe changes occurred to numerical, nominal, and binary attributes after pre-processing.<br>
+
+### A) Assessing Class Label Balance After Pre-processing
+
+```{r}
+library(ggplot2)
+library(grid)
+
+# Create a bar plot for the "status" attribute
+gg <- ggplot(dataset, aes(x = status)) +
+  geom_bar(fill = "darkgray", color = "black") +
+  labs(title = "Distribution of Startup Status", x = "Status", y = "Count") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Print the plot
+print(gg)
+
+# Add an external annotation to the right side
+grid.text("1 = Acquired\n0 = Closed", x = 0.2, y = 0.92, just = c("right", "top"), gp = gpar(fontsize = 12, col = "black"))
+```
+Despite pre-processing, **there is still a class imbalance in the class label (status)**. <br>
+
+
+#### B) Numerical Attributes Before vs After Pre-processing
+
+```{r}
+# Load the required libraries
+library(ggplot2)
+
+# Select numerical attributes for histograms
+numerical_attributes <- c("age_first_funding_year", "age_last_funding_year",
+                           "age_first_milestone_year", "age_last_milestone_year",
+                           "relationships", "funding_rounds", "funding_total_usd",
+                           "milestones", "avg_participants")
+
+# Melt the dataset for easier plotting
+melted_data <- reshape2::melt(dataset[, numerical_attributes])
+
+# Create histogram with facet wrap
+histogram_plot_numerical_after <- ggplot(melted_data, aes(x = value)) +
+  geom_histogram(binwidth = 1, fill = "darkgray", color = "black") +
+  facet_wrap(~variable, scales = "free") +
+  labs(title = "Histogram for Numerical Attributes AFTER Pre-processing", x = "Value", y = "Frequency") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Set up a 1x2 plotting grid to show histograms side by side
+par(mfrow = c(1, 2))
+
+# Plot the histograms side by side
+plot(histogram_plot_numerical_before)
+plot(histogram_plot_numerical_after)
+```
+The graphs above show a comparison between numerical data BEFORE and AFTER pre-processing. Many alterations have taken place within the numerical attributes. From flooring, normalization, and removing outliers. <br>
+
+#### C) Nominal Attributes Before vs After Pre-processing
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+# Selecting specific columns for visualization
+columns_to_visualize <- dataset[, c("state_code", "city", "category_code")]
+
+# Melt the required columns for visualization
+melted_data_before <- gather(data = columns_to_visualize)
+
+# Plotting bar graphs for the specified attributes and facet_wrap
+barplot_nominal_after <- ggplot(melted_data_before, aes(x = value, fill = key)) +
+  geom_bar(position = "dodge", stat = "count", color = "black", fill = "darkgray") +
+  facet_wrap(~key, scales = "free") +
+  labs(title = "Nominal Attributes AFTER Pre-processing", x = "Values", y = "Count") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Displaying the plot
+print(barplot_nominal_before)
+print(barplot_nominal_after)
+```
+Many alterations have taken place within the nominal attributes. Attributes were encoded and outliers were removed. In addition, attribute state_code.1 was deemed redundant and hence removed. From the graphs, we can observe frequent trends in category_code, city, and state_code. <br>
+
+
+#### D) Binary Attributes Before vs After Pre-processing
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+# List of binary attributes
+binary_attributes <- c("is_CA", "is_NY", "is_MA", "is_TX", "is_otherstate", 
+                       "is_software", "is_web", "is_mobile", "is_enterprise", 
+                       "is_advertising", "is_gamesvideo", "is_ecommerce", 
+                       "is_biotech", "is_consulting", "is_othercategory", 
+                       "has_VC", "has_angel", "has_roundA", "has_roundB", 
+                       "has_roundC", "has_roundD", "is_top500", "status")
+
+# Melt the datasets for easier plotting
+melted_data <- gather(dataset, key = "variable", value = "value", all_of(binary_attributes))
+
+# Create bar plots with facet wrap
+barplot_binary_after <- ggplot(melted_data, aes(x = value, fill = variable)) +
+  geom_bar(position = "dodge", stat = "count", color = "black", fill = "darkgray") +
+  facet_wrap(~variable, scales = "free") +
+  labs(title = "Bar Plots for Binary Attributes AFTER Pre-processing", x = "Value", y = "Count") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Display the plot
+print(barplot_binary_before)
+print(barplot_binary_after)
+```
+ The binary attributes have remained unaltered; no changes have been applied.<br><br>
+
+## Plotting of Pre-processed Data 
+
+Plotting pre-processed data is crucial as it visually unveils patterns, trends, and distributions within the dataset. It helps understand attribute distributions, correlations, and spot variations post-preprocessing, which is fundamental for making informed decisions and uncovering insights in the data analysis process.<br>
+
+### A) Relationship between Top 500 Companies and Status
+
+```{r}
+cor(dataset$is_top500, dataset$status)
+```
+A correlation coefficient of 0.315 suggests a moderate positive correlation between the attributes ‘is_top500’ and the class label ‘status’. This implies that changes in one variable are associated with relatively proportional changes in the other variable, albeit not perfectly.
+
+```{r}
+library(ggplot2)
+
+# Create a summary table to count the combinations of is_top500 and status
+summary_table <- table(dataset$is_top500, dataset$status)
+
+# Convert the summary table to a data frame
+summary_df <- as.data.frame(summary_table)
+
+# Rename the columns for clarity
+colnames(summary_df) <- c("is_top500", "status", "count")
+
+# Create a barplot
+ggplot(summary_df, aes(x = is_top500, y = count, fill = status)) +
+  geom_bar(stat = "identity", position = "dodge", aes(fill = status), color = "black") +
+  labs(title = "Top 500 Company vs. Status", x = "Top 500", y = "Count") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = c("acquired" = "darkgray", "closed" = "darkgray"))
+```
+**Is being a Top 500 company a strong indicator of whether a startup will be acquired or closed?** The vast majority of top 500 companies are acquired companies.<br>
+
+
+### B) Distribution of Startup Sectors
+
+```{r}
+library(ggplot2)
+library(scales)
+
+# Define shades of gray
+colors <- c("#FFFFFF", "#F9F9F9", "#F2F2F2", "#E5E5E5", "#D9D9D9", "#CCCCCC", "#B2B2B2", "#999999", "#808080", "#666666") 
+
+# Create a data frame for your binary attributes
+binary_data <- data.frame(
+  Attribute = c("is_software", "is_web", "is_mobile", "is_enterprise", "is_advertising", "is_gamesvideo", "is_ecommerce", "is_biotech", "is_consulting", "is_othercategory"),
+  Value = c(sum(dataset$is_software), sum(dataset$is_web), sum(dataset$is_mobile), sum(dataset$is_enterprise), sum(dataset$is_advertising), sum(dataset$is_gamesvideo), sum(dataset$is_ecommerce), sum(dataset$is_biotech), sum(dataset$is_consulting), sum(dataset$is_othercategory))
+)
+
+# Calculate percentages
+binary_data$Percentage <- (binary_data$Value / sum(binary_data$Value)) * 100
+
+# Create the pie chart with shades of gray
+pie_chart <- ggplot(binary_data, aes(x = "", y = Percentage, fill = Attribute)) +
+  geom_bar(stat = "identity", width = 1, color="black") +
+  coord_polar(theta = "y") +
+  labs(title = "Startup Category") +
+  scale_fill_manual(values = colors) +  # Set the colors
+  scale_y_continuous(labels = percent_format(scale = 1))
+
+# Display the pie chart
+print(pie_chart)
+```
+
+
+**What are the most popular startup sectors?** The answer is software. Most startups focus on tech-related sectors, like software, web, and mobile.<br>
+
+
+### C) Distribution of Startup State of Origin
+
+```{r}
+library(ggplot2)
+
+# Create a data frame with the counts of each binary attribute
+binary_data <- data.frame(
+  Attribute = c("is_CA", "is_NY", "is_MA", "is_TX", "is_otherstate"),
+  Count = c(
+    sum(dataset$is_CA),
+    sum(dataset$is_NY),
+    sum(dataset$is_MA),
+    sum(dataset$is_TX),
+    sum(dataset$is_otherstate)
+  )
+)
+
+# Calculate percentages
+binary_data$Percentage <- (binary_data$Count / sum(binary_data$Count)) * 100
+
+# Create a pie chart
+pie_chart <- ggplot(binary_data, aes(x = "", y = Percentage, fill = Attribute)) +
+  geom_bar(stat = "identity", width = 1, color="black") +
+  coord_polar(theta = "y") +  # Convert to polar coordinates for a pie chart
+  labs(title = "Distribution of Startup State of Origin") +
+  scale_fill_manual(values = c("is_CA" = "lightgray", "is_NY" = "darkgray", "is_MA" = "darkgray", "is_TX" = "darkgray", "is_otherstate" = "darkgray")) +
+  theme_minimal() +  
+  geom_text(aes(label = paste0(round(Percentage, 1), "%")), position = position_stack(vjust = 0.5))
+
+# Display the pie chart
+print(pie_chart)
+```
+**Which state is the most popular choice for startups to launch in?** The answer is California. 51.4% of all startups launched from California.<br>
+
+### D) Distribution of Funding Rounds and Status
+
+```{r}
+library(ggplot2)
+library(cowplot)
+library(tidyr)  # Load the tidyr package
+
+# Filter rows where status is "acquired"
+acquired_data <- subset(dataset, status == "1")
+
+# Create a long-format dataset for use with ggplot2
+acquired_data_long <- tidyr::gather(acquired_data, key = "Attribute", value = "BinaryValue", has_VC, has_angel, has_roundA, has_roundB, has_roundC, has_roundD)
+
+# Create histograms with facet_wrap for "acquired" status
+plot1 <- ggplot(acquired_data_long, aes(x = BinaryValue)) +
+  geom_histogram(binwidth = 1, fill = "darkgray", color = "black") +
+  facet_wrap(~ Attribute, scales = "free_x") +
+  labs(title = "'Acquired' Status", x = "Value", y = "Frequency") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Filter rows where status is "closed"
+closed_data <- subset(dataset, status == "0")
+
+# Create a long-format dataset for use with ggplot2
+closed_data_long <- tidyr::gather(closed_data, key = "Attribute", value = "BinaryValue", has_VC, has_angel, has_roundA, has_roundB, has_roundC, has_roundD)
+
+# Create histograms with facet_wrap for "closed" status
+plot2 <- ggplot(closed_data_long, aes(x = BinaryValue)) +
+  geom_histogram(binwidth = 1, fill = "darkgray", color = "black") +
+  facet_wrap(~ Attribute, scales = "free_x") +
+  labs(title = "'Closed' Status", x = "Value", y = "Frequency") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Plotting the two histograms side by side
+plot_grid(plot1, plot2, nrow = 1)
+```
+**Do increased funding rounds serve as an indicator of whether a startup is more likely to be acquired or closed in the future?** The answer is not necessarily, but from the graphs we can see that the number of acquired startups that went through series A, B, C, and D is more than the number of closed startups that went through them. The majority of "acquired" startups had a series A funding round, while the majority of "closed" startups did not. Series A and Series B funding could be a potential indicator of startup success. Angel investors invested almost equally in both "acquired" and "closed" startups. VCs tend to invest more in startups that become "acquired" in the future. Nevertheless, the results may be inaccurate because the class label is imbalanced.<br>
+
+
+### E) Relationship Between the Number of Funding Rounds and Total Funding Raised
+
+```{r}
+range(dataset$funding_total_usd)
+```
+Attribute funding_total_usd was normalized using min-max normalization. So, the range of funding_total_usd values fall within 0 (minimum) and 1 (maximum). 
+
+```{r}
+range(dataset$funding_rounds)
+```
+The least amount of funding rounds went through by any startup is 1, indicating that all startups at least went through one funding round. The most amount of funding rounds went through by any startup is 6. 
+
+```{r}
+cor(dataset$funding_rounds, dataset$funding_total_usd)
+```
+A correlation of 0.439 indicates a moderate positive correlation between the variables 'funding_rounds' and 'funding_total_usd'.
+
+```{r}
+boxplot(dataset$funding_total_usd ~ dataset$funding_rounds,
+        xlab = "Number of Funding Rounds",
+        ylab = "Funding Total (USD)",
+        main = "Funding Rounds vs Funding Total",
+        col = "darkgray")
+```
+**Is there a strong correlation between the number of funding rounds and the total funding received by a company?** It’s generally true, but not an absolute rule. There’s often a positive relationship between increased funding rounds and raised funds, indicating that more rounds tend to yield more money.<br>
+
+
+### F) Association Between Total Funding and Startup Category
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Summary table: Sum of funding for each category
+category_funding_summary <- dataset %>%
+  group_by(is_software, is_web, is_mobile, is_enterprise,
+           is_advertising, is_gamesvideo, is_ecommerce, is_biotech, is_consulting, is_othercategory) %>%
+  summarise(total_funding = sum(funding_total_usd))
+
+# Reshape the data for plotting
+category_funding_summary <- category_funding_summary %>%
+  pivot_longer(
+    cols = -total_funding,
+    names_to = "Category",
+    values_to = "BinaryValue"
+  )
+
+# Create a bar plot with gray colors
+ggplot(category_funding_summary, aes(x = Category, y = total_funding, fill = BinaryValue)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Total Funding vs Startup Category", x = "Category", y = "Total Funding") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) 
+```
+**Is there a strong correlation between the sector of the company and the total funding received by a company?** The answer is yes. Software startups received the highest amounts of funding. Followed by other tech-related sectors: web and mobile.<br><br><br>
+
+
+## 5-Data Mining Techniques
+
+To identify patterns and make predictions based on the data of the dataset, we are going to perform the data mining techniques classification and clustering. **Classification** is a supervised learning technique that uses labeled data to train a model to predict the class of new data points. **Clustering** is an unsupervised learning technique that groups unlabeled data points into clusters based on their similarities. <br><br>
+
+
+## 5.1-Classification 
+
+As mentioned before, **classification is a form of supervised learning, where the class label is known beforehand**. In the case of startup data, the class label is the binary attribute "status". Status attribute holds two values, either 1 for "acquired" status, or 0 for "closed" status. In classification, the algorithm learns from labeled training data, then establishes a relationship between input features and their respective classes. The learned patterns are then used to classify new, unseen data. 
+
+In this project, we are going to use the **decision tree** algorithm to perform classification. Decision tree is considered a greedy algorithm. The tree is constructed in a top-down recursive divide-and-conquer manner. It takes the form of a branching tree; the top node is the decision node and the bottom unbranched leaves represent the class. 
+
+The following classification steps will be performed:
+
+1. Construct a model using training data. 
+2. Evaluate the model using testing data. 
+3. Predict the class using new data.
+
+### Partitioning Method
+
+**We will use the hold-out method as the partitioning method. The dataset will be sectioned into three partitions: 70:30 data split, 80:20 data split, and 90:10 data splits.** The hould-out split method is a common practice in machine learning. It helps in maximizing the usage of available data for both training and testing. By performing this  method, we can prevent an overfitted model by providing a separate data set for model evaluation.For each split we will run Information Gain, Gain Ration, and Gini Index. Ultimately, we will have a total of nine decision trees.
+
+**◆ Information Gain** is is a measure used in the decision tree algorithm. It represents the amount of disorder or uncertainty in a dataset that is reduced (or gained) after splitting the data on an attribute. It measures the reduction in entropy (impurity or disorder) after the dataset is split. Attribute with the **maximum information gain is selected as the decision node**. 
+
+**◆ Gain Ratio** is considers the Information Gain but normalizes it by the intrinsic information associated with each split. It accounts for the size of the branches resulting from a split. Attribute with the maximum gain ratio is selected as the splitting attribute. Attribute with the **maximum gain ratio is selected as the splitting attribute**.
+
+**◆ Gini Index** is is a measure of impurity or the quality of a split in a dataset. In the context of decision trees, it calculates the overall probability of a specific feature being misclassified. Attribute with the **minimum gini index is selected as the splitting attribute**.
+
+Before we start let's take a look at the startup data after pre-processing:
+
+```{r}
+library(readxl)
+preprocessed_dataset <- read_excel("Preprocessed_StartupData.xlsx")
+str(preprocessed_dataset)
+```
+
+All attributes have been changed to a numerical format to ensure smooth utilization of classification tree plotting functions.
+
+
+### Balancing the Class Label
+
+```{r}
+# Identifying the rows of each status
+closed_indices <- which(preprocessed_dataset$status == 0)
+acquired_indices <- which(preprocessed_dataset$status == 1)
+
+# Number of samples for each status class
+num_closed <- length(closed_indices)
+num_acquired <- length(acquired_indices)
+
+# Subsampling to balance the data
+if (num_closed > num_acquired) {
+  # Subsample the "closed" status to match the "acquired" count
+  sampled_closed_indices <- sample(closed_indices, num_acquired)
+  balanced_preprocessed_dataset <- rbind(preprocessed_dataset[sampled_closed_indices, ], preprocessed_dataset[acquired_indices, ])
+} else {
+  # Subsample the "acquired" status to match the "closed" count
+  sampled_acquired_indices <- sample(acquired_indices, num_closed)
+  balanced_preprocessed_dataset <- rbind(preprocessed_dataset[closed_indices, ], preprocessed_dataset[sampled_acquired_indices, ])
+}
+```
+We have previously shown the imbalance of the class label "status" (section 4: Assessing Class Label Balance After Pre-processing). To address the class imbalance issue, we will use the **undersampling** technique. Undersampling is a balancing method used in machine learning where you reduce the number of instances of the over-represented class (status = "acquired" or 1) to make it equal to the number of instances of the under-represented class (status = "closed" or 0). By balancing the class distribution, undersampling can lead to more robust and fair models, preventing the model from being overly influenced by the majority class.
+
+##### Verify Class Label Balance 
+```{r}
+# Count of each class in the original preprocessed_dataset
+original_class_counts <- table(preprocessed_dataset$status)
+
+# Count of each class in the balanced preprocessed_dataset
+balanced_class_counts <- table(balanced_preprocessed_dataset$status)
+
+# Display the counts
+print("Original preprocessed_dataset Class Counts:")
+print(original_class_counts)
+print("Balanced preprocessed_dataset Class Counts:")
+print(balanced_class_counts)
+```
+There are 452 rows for acquired status (majority), and 275 rows for closed status (minority) before balancing. 
+After balancing, there are 275 rows for acquired status and 275 rows for closed status showcasing a balanced class label ready for classification. 
+
+
+### Model Evaluation Metrics
+```{r}
+# Function for Model Evaluation
+evaluate_model <- function(predictions, actual_labels) {
+  # Confusion Matrix
+  confusion_matrix <- table(actual_labels, predictions)
+  print(confusion_matrix)
+  
+  TP <- confusion_matrix[1, 1]
+  TN <- confusion_matrix[2, 2]
+  FP <- confusion_matrix[2, 1]
+  FN <- confusion_matrix[1, 2]
+  
+  # Calculate metrics
+  accuracy <- ((TP + TN) / sum(confusion_matrix)) * 100
+  precision <- (TP / (TP + FP)) * 100
+  sensitivity <- (TP / (TP + FN)) * 100
+  specificity <- (TN / (TN + FP)) * 100
+  
+  # Print metrics
+  cat("Accuracy:", accuracy, "%\n")
+  cat("Precision:", precision, "%\n")
+  cat("Sensitivity (Recall):", sensitivity, "%\n")
+  cat("Specificity:", specificity, "%\n")
+  
+  # Return a list of metrics
+  return(list(
+    accuracy = accuracy,
+    precision = precision,
+    sensitivity = sensitivity,
+    specificity = specificity
+  ))
+}
+
+install.packages("caret")
+install.packages("pROC")
+library(caret)
+library(pROC)
+```
+The code encapsulates a function that facilitates the evaluation of classification models. The function calculates and prints common classification metrics (accuracy, precision, sensitivity, and specificity) based on predicted and actual labels. 
+
+### Decision Trees
+Presented are two tree models: simplified and original. In decision tree models, the attribute demonstrating the most significant information gain is represented as the decision node or the root. Upon inspection of the displayed trees, it’s apparent that the ‘relationships’ attribute possesses the highest information gain, positioned prominently at the top of the tree structure.
+
+
+## 1-First Partition: (70% training, 30% testing)
+
+### Partitioning 
+```{r}
+set.seed(1234)
+ind=sample(2, nrow(balanced_preprocessed_dataset), replace=TRUE, prob=c(0.70 , 0.30))
+train_data_70=balanced_preprocessed_dataset[ind==1,]
+test_data_70=balanced_preprocessed_dataset[ind==2,]
+```
+The code splits the preprocessed dataset into 70% training data and 30% testing data. 
+
+### Verify Partitioning
+```{r}
+dim(train_data_70)
+dim(test_data_70)
+```
+The training data consist of 381 rows. 
+The testing data consist of 169 rows.
+
+
+## A) ID3 Algorithm: Information Gain 
+
+### A.1) Constructing the Decision Tree 
+```{r}
+library(party)
+library(mvtnorm)
+library(modeltools)
+library(stats4)
+library(strucchange)
+library(zoo)
+
+myFormula <- status~ state_code + city + name + founded_at + closed_at + first_funding_at + last_funding_at + 
+            age_first_funding_year + age_last_funding_year + age_first_milestone_year + age_last_milestone_year + 
+            relationships + funding_rounds + funding_total_usd + milestones + is_CA + is_NY + is_MA + is_TX + is_otherstate + 
+            category_code + is_software + is_web + is_mobile + is_enterprise + is_advertising + is_gamesvideo + is_ecommerce + 
+            is_biotech + is_consulting + is_othercategory + has_VC + has_angel + has_roundA + has_roundB + has_roundC + 
+            has_roundD + avg_participants + is_top500
+
+preprocessed_dataset_ctree_IG_70<-ctree(myFormula, data=train_data_70)
+
+table(predict(preprocessed_dataset_ctree_IG_70), train_data_70$status)
+```
+The code builds the decision tree model. 
+
+### A.2) Plotting
+```{r}
+print(preprocessed_dataset_ctree_IG_70)
+plot(preprocessed_dataset_ctree_IG_70)
+plot(preprocessed_dataset_ctree_IG_70,type="simple")
+```
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;• Splitting attribute: “relationships” <= 3.<br>
+&nbsp;&nbsp;• The algorithm considers the “relationships” feature for the first decision.<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;• Node 2: If “relationships” <= 3, it evaluates the next criterion.<br>
+&nbsp;&nbsp;• Node 7: If “relationships” > 3, it evaluates a different criterion.<br>
+
+**Leaf Nodes (Terminal Nodes):**<br>
+&nbsp;&nbsp;• Node 4, Node 5, Node 6, Node 9, Node 10, Node 11: Terminal nodes where the decision tree makes predictions.<br>
+
+**Number of Nodes:** 7 (1 root, 4 internal, 2 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical as the root node, indicating high importance.<br>
+&nbsp;&nbsp;2. is_top500: Significant for further splits, showcasing its relevance.<br>
+&nbsp;&nbsp;3. age_last_milestone_year: Used for additional splits, emphasizing its contribution.<br>
+
+In summary, this tree utilizes the “relationships” feature for the initial split, followed by additional criteria at each branching point, ultimately leading to predictions at the terminal nodes. The weights associated with each terminal node indicate the number of observations falling into each category.
+
+### A.3) Testing 
+```{r}
+predictions_IG_70 <- predict(preprocessed_dataset_ctree_IG_70, newdata = test_data_70, type = "response")
+labels_IG_70 <- test_data_70$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+
+### A.4) Confusion Matrix 
+```{r}
+confusion_matrix_IG_70 <- table(test_data_70$status, predictions_IG_70)
+print(confusion_matrix_IG_70)
+```
+The confusion matrix for the provided code indicates the following:<br>
+
+- **True Positive (TP):** 48 cases were correctly predicted as 0.775.<br>
+- **False Positive (FP):** 35 cases were incorrectly predicted as 0.525, 6 cases as 0.775, and 23 cases as 0.2632.<br>
+- **True Negative (TN):** 12 cases were correctly predicted as 0.2632, 7 cases as 0.525, and 38 cases as 0.775.<br>
+- **False Negative (FN):** 0 cases were incorrectly predicted as 0.2632.<br>
+
+### A.5) Evaluation Metrics
+
+```{r}
+metrics_IG_70 <- evaluate_model(predictions_IG_70, labels_IG_70)
+print(metrics_IG_70)
+```
+•	**Accuracy (11.2%):** This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 15.4%, indicating that only a small percentage of predictions were correct.<br>
+•	**Precision (100 %):** Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 84.2%, indicating that when it predicted a positive outcome, it was correct in 84.2% of cases.<br>
+•	**Sensitivity (34.2 %):** Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 32%, suggesting that it didn’t perform well in capturing all positive instances.<br>
+•	**Specificity (100 %):** Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 76.9%, the model performed relatively well in accurately identifying negative cases.<br>
+
+In summary, while the model exhibited high precision and specificity, the low accuracy and sensitivity signal potential challenges, especially in correctly identifying positive instances. 
+
+### B) C50 Algorithm: Gain Ratio
+
+### B.1) Constructing the Decision Tree 
+
+```{r}
+library(C50)
+
+# Convert 'status' to a factor
+train_data_70$status <- as.factor(train_data_70$status)
+
+# Train the model using C5.0 with Gain Ratio for splitting
+C5Fit_70 <- C5.0(status ~ ., data = train_data_70, control = C5.0Control(earlyStopping = FALSE, CF = 0.25))
+
+# Print the summary of the model
+summary(C5Fit_70)
+```
+The code builds the decision tree model. 
+
+
+### B.2) Plotting
+
+```{r}
+plot(C5Fit_70, type="simple")
+```
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;• Splitting attribute: “relationships” <= 2.<br>
+&nbsp;&nbsp;• The algorithm considers the “relationships” feature for the first decision.<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;• Node 2: If “relationships” <= 2, it evaluates the next criterion.<br>
+&nbsp;&nbsp;• Node 7: If “relationships” > 2, it evaluates a different criterion.<br>
+
+**Leaf Nodes (Terminal Nodes):**<br>
+&nbsp;&nbsp;• Node 4, Node 5, Node 6, Node 9, Node 10, Node 11: Terminal nodes where the decision tree makes predictions.<br>
+
+**Number of Nodes:** 53 (1 root, 26 internal, 26 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical as the root node, indicating high importance (100.00%).<br>
+&nbsp;&nbsp;2. funding_total_usd: Significant for further splits, showcasing its relevance (73.49%).<br>
+&nbsp;&nbsp;3. has_roundD: Plays a key role in decision-making (70.34%).<br>
+
+In summary, this tree utilizes the “relationships” feature for the initial split, followed by additional criteria at each branching point, ultimately leading to predictions at the terminal nodes. The weights associated with each terminal node indicate the number of observations falling into each category. The most important features, as identified by the attribute usage, include “relationships,” “funding_total_usd,” and “has_roundD.”
+
+### B.3) Testing 
+
+```{r}
+predictions_GR_70 <- predict(C5Fit_70, newdata = test_data_70)
+labels_GR_70 <- test_data_70$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+### B.4) Confusion Matrix 
+
+```{r}
+# Create a confusion matrix
+confusion_matrix_GR_70 <- table(test_data_70$status, predictions_GR_70)
+
+# Display the confusion matrix
+print(confusion_matrix_GR_70)
+```
+The confusion matrix for the provided code indicates the following:<br>
+
+	•	True Positive (TP): 66 cases were correctly predicted as 1.<br>
+	•	False Positive (FP): 28 cases were incorrectly predicted as 1, and 27 cases were incorrectly predicted as 0.<br>
+	•	True Negative (TN): 48 cases were correctly predicted as 0.<br>
+	•	False Negative (FN): 27 cases were incorrectly predicted as 0.<br>
+
+### B.5) Evaluation Metrics
+
+```{r}
+metrics_GR_70 <- evaluate_model(predictions_GR_70, labels_GR_70)
+```
+• Accuracy (67.46%): This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 67.46%, indicating a relatively moderate level of correctness.<br>
+
+• Precision (64%): Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 64%, indicating that when it predicted a positive outcome, it was correct in 64% of cases.<br>
+
+• Sensitivity (Recall) (63.16%): Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 63.16%, suggesting a moderate performance in capturing positive instances.<br>
+
+• Specificity (70.97%): Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 70.97%, the model performed relatively well in accurately identifying negative cases.<br>
+
+In summary, while the model exhibited moderate accuracy and sensitivity, the precision and specificity suggest a reasonable ability to make correct predictions, especially in identifying negative instances.<br>
+
+### CART Algorithm: Gini Index 
+
+### C.1) Constructing the Decision Tree 
+```{r}
+library(rpart)
+# Gini index (CART) and Tree model 70:30
+preprocessed_dataset_ctree_GI_70 <- rpart(status ~ ., data = train_data_70, method = "class", parms = list(split = "gini"))
+```
+The code builds the decision tree model. 
+
+### C.2) Plotting
+```{r}
+library(rpart.plot)
+print(preprocessed_dataset_ctree_GI_70)
+rpart.plot(preprocessed_dataset_ctree_GI_70)
+```
+
+
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;• Splitting attribute: "relationships" < 2.5, considering 381 observations with an expected loss of 0.4776903 (52.2% class 0, 47.8% class 1).<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;• Node 2: If "relationships" < 2.5, it predicts class 0 with an expected loss of 0.1485149 (85.1% class 0, 14.9% class 1).<br>
+&nbsp;&nbsp;• Node 3: If "relationships" >= 2.5, it predicts class 1 with an expected loss of 0.4035714 (40.4% class 0, 59.6% class 1).<br>
+&nbsp;&nbsp;• Node 6: If "funding_total_usd" < 0.00723402 (under Node 3), it predicts class 0 with an expected loss of 0.0952381 (90.5% class 0, 9.5% class 1).<br>
+&nbsp;&nbsp;• Node 7: If "funding_total_usd" >= 0.00723402 (under Node 3), it predicts class 1 with an expected loss of 0.3629344 (36.3% class 0, 63.7% class 1).<br>
+&nbsp;&nbsp;• Node 14: If "milestones" < 0.5 (under Node 7), it predicts class 0 with an expected loss of 0.2857143 (71.4% class 0, 28.6% class 1).<br>
+&nbsp;&nbsp;• Node 15: If "milestones" >= 0.5 (under Node 7), it predicts class 1 with an expected loss of 0.3203463 (32.0% class 0, 68.0% class 1).<br>
+
+**Leaf Nodes (Terminal Nodes):**<br>
+&nbsp;&nbsp;• Node 28: Terminal node predicting class 0 (100% class 0, 0% class 1).<br>
+&nbsp;&nbsp;• Node 29: Terminal node predicting class 1 (42.9% class 0, 57.1% class 1).<br>
+
+**Number of Nodes:** 8 (1 root, 6 internal, 2 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical as the root node, indicating high importance.<br>
+&nbsp;&nbsp;2. funding_total_usd: Significant for further splits, showcasing its relevance.<br>
+&nbsp;&nbsp;3. milestones: Used for additional splits, emphasizing its contribution.<br>
+
+In summary, this tree utilizes the "relationships" feature for the initial split, followed by additional criteria at each branching point, ultimately leading to predictions at the terminal nodes. The weights associated with each terminal node indicate the number of observations falling into each category.
+### C.3) Testing 
+```{r}
+predictions_GI_70 <- predict(preprocessed_dataset_ctree_GI_70, newdata = test_data_70, type = "class")
+labels_GI_70 <- test_data_70$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+### C.4) Confusion Matrix
+```{r}
+# Create a confusion matrix
+confusion_matrix_GI_70 <- table(test_data_70$status, predictions_GI_70)
+
+# Display the confusion matrix
+print(confusion_matrix_GI_70)
+```
+The confusion matrix for the provided code indicates the following:
+
+	•	True Positive (TP): 84 cases were correctly predicted as 1.<br>
+	•	False Positive (FP): 26 cases were incorrectly predicted as 1, and 9 cases were incorrectly predicted as 0.<br>
+	•	True Negative (TN): 50 cases were correctly predicted as 0.<br>
+	•	False Negative (FN): 9 cases were incorrectly predicted as 0.<br>
+
+### C.5) Evaluation Metrics
+
+```{r}
+metrics_GI_70 <- evaluate_model(predictions_GI_70, labels_GI_70)
+```
+• Accuracy (79.29%): This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 79.29%, indicating a relatively high level of correctness.<br>
+
+• Precision (84.75%): Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 84.75%, indicating that when it predicted a positive outcome, it was correct in 84.75% of cases.<br>
+
+• Sensitivity (Recall) (65.79%): Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 65.79%, suggesting a moderate performance in capturing positive instances.<br>
+
+• Specificity (90.32%): Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 90.32%, the model performed well in accurately identifying negative cases.<br>
+
+In summary, the model exhibited high accuracy and precision, with good specificity. However, the sensitivity indicates that there might be room for improvement in capturing positive instances.
+
+--------------------------------------------------------------------------------
+
+## Second Partition:  (80% training, 20% testing)
+
+### Partitioning 
+```{r}
+set.seed(1234)
+ind=sample(2, nrow(balanced_preprocessed_dataset), replace=TRUE, prob=c(0.80 , 0.20))
+train_data_80=balanced_preprocessed_dataset[ind==1,]
+test_data_80=balanced_preprocessed_dataset[ind==2,]
+```
+
+The code splits the preprocessed dataset into 80% training data and 20% testing data. 
+
+
+#### Verify Partitioning
+```{r}
+dim(train_data_80)
+dim(test_data_80)
+```
+The training data consist of 443 rows. 
+The testing data consist of 107 rows.
+
+### A.1) Constructing the Decision Tree
+```{r}
+library(party)
+myFormula <- status ~ state_code + city + name + founded_at + closed_at + first_funding_at + last_funding_at + 
+            age_first_funding_year + age_last_funding_year + age_first_milestone_year + age_last_milestone_year + 
+            relationships + funding_rounds + funding_total_usd + milestones + is_CA + is_NY + is_MA + is_TX + is_otherstate + 
+            category_code + is_software + is_web + is_mobile + is_enterprise + is_advertising + is_gamesvideo + is_ecommerce + 
+            is_biotech + is_consulting + is_othercategory + has_VC + has_angel + has_roundA + has_roundB + has_roundC + 
+            has_roundD + avg_participants + is_top500
+preprocessed_dataset_ctree_IG_80 <- ctree(myFormula, data = train_data_80)
+
+table(predict(preprocessed_dataset_ctree_IG_80), train_data_80$status)
+```
+The code builds the decision tree model. 
+
+
+### A.2) Plotting
+```{r}
+print(preprocessed_dataset_ctree_IG_80)
+plot(preprocessed_dataset_ctree_IG_80)
+plot(preprocessed_dataset_ctree_IG_80, type = "simple")
+```
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;• Splitting attribute: “relationships” < 3, considering 443 observations with a criterion of 1 and a statistic of 70.905 (expected loss: 70.905%).<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;Node 2: If “relationships” <= 3, it follows the criterion with a statistic of 18.195.<br>
+&nbsp;&nbsp;• Node 3: If “relationships” > 3, it follows a different criterion with a statistic of 13.937.<br>
+
+**Leaf Nodes (Terminal Nodes):**<br>
+&nbsp;&nbsp;• Node 4: If “milestones” <= 2 and “funding_total_usd” <= 0.2285442, it predicts status 0 with weights = 109.<br>
+&nbsp;&nbsp;• Node 5: If “milestones” <= 2 and “funding_total_usd” > 0.2285442, it predicts status 1 with weights = 47.<br>
+&nbsp;&nbsp;• Node 6: If “milestones” > 2, it predicts status 1 with weights = 14.<br>
+&nbsp;&nbsp;• Node 7: If “age_last_milestone_year” <= 4, it predicts status 0 with weights = 182.<br>
+&nbsp;&nbsp;• Node 8: If “age_last_milestone_year” > 4, it predicts status 1 with weights = 91.<br>
+
+**Number of Nodes:** 9 (1 root, 4 internal, 5 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical as the root node, indicating high importance (100.00%).<br>
+&nbsp;&nbsp;2. milestones: Significant for splits, emphasizing its relevance (96.61%).<br>
+&nbsp;&nbsp;3. funding_total_usd: Plays a role in decisions, showcasing its importance (7.67%).<br>
+
+In summary, this decision tree, rooted in the “relationships” attribute, efficiently classifies observations based on key features. With 5 terminal nodes, it provides distinct predictions for different paths in the decision-making process. The primary attributes influencing decisions include “relationships,” “milestones,” and “funding_total_usd.” The tree’s structure emphasizes the significance of these features in determining the final status prediction for startups.
+
+### A.3) Testing
+```{r}
+predictions_IG_80 <- predict(preprocessed_dataset_ctree_IG_80, newdata = test_data_80, type = "response")
+labels_IG_80 <- test_data_80$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+### A.4) Confusion Matrix
+```{r}
+confusion_matrix_IG_80 <- table(test_data_80$status, predictions_IG_80)
+print(confusion_matrix_IG_80)
+```
+The confusion matrix for the provided code indicates the following:<br>
+
+	•	True Positive (TP): 31 cases were correctly predicted as 0.5824.<br>
+	•	False Positive (FP): 12 cases were incorrectly predicted as 0.4043, 1 case as 0.5824, 4 cases as 0.09174, and 2 cases as 0.6429.<br>
+	•	True Negative (TN): 23 cases were correctly predicted as 0.09174, 8 cases as 0.4043, and 17 cases as 0.6429.<br>
+	•	False Negative (FN): 4 cases were incorrectly predicted as 0.09174 and 5 cases as 0.4043.<br>
+	
+### A.5) Evaluation Metrics
+```{r}
+metrics_IG_80 <- evaluate_model(predictions_IG_80, labels_IG_80)
+print(metrics_IG_80)
+```
+• Accuracy (26.17%): This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 26.17%, indicating a relatively low level of correctness. <br>
+
+• Precision (85.19%): Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 85.19%, indicating that when it predicted a positive outcome, it was correct in 85.19% of cases.<br>
+
+• Sensitivity (Recall) (74.19%): Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 74.19%, suggesting a moderate performance in capturing positive instances.<br>
+
+• Specificity (55.56%): Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 55.56%, the model performed moderately well in accurately identifying negative cases.<br>
+
+In summary, the model exhibited low accuracy but high precision. The sensitivity indicates a reasonable ability to capture positive instances, while the specificity suggests room for improvement in identifying negative cases.<br>
+
+
+### B) C50 Algorithm: Gain Ratio
+
+### B.1) Constructing the Decision Tree
+
+```{r}
+library(C50)
+train_data_80$status <- as.factor(train_data_80$status)
+
+C5Fit_80 <- C5.0(status ~ ., data = train_data_80, control = C5.0Control(earlyStopping = FALSE, CF = 0.25))
+summary(C5Fit_80)
+```
+The code builds the decision tree model. 
+
+
+### B.2) Plotting
+```{r}
+plot(C5Fit_80, type = "simple")
+```
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;• Splitting attribute: “relationships” <= 3, considering 443 observations with a criterion of 1 and a statistic of 70.905 (expected loss: 70.905%).<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;• Node 2: If “relationships” <= 3, it evaluates the next criterion with a statistic of 18.195.<br>
+&nbsp;&nbsp;• Node 3: If “relationships” > 3, it evaluates a different criterion with a statistic of 13.937.<br>
+
+**Leaf Nodes (Terminal Nodes):**<br>
+&nbsp;&nbsp;• Node 4: Terminal node where the decision tree predicts based on weights = 109.<br>
+&nbsp;&nbsp;• Node 5: Terminal node where the decision tree predicts based on weights = 47.<br>
+&nbsp;&nbsp;• Node 6: Terminal node where the decision tree predicts based on weights = 14.<br>
+&nbsp;&nbsp;• Node 7: Terminal node where the decision tree predicts based on weights = 182.<br>
+&nbsp;&nbsp;• Node 8: Terminal node where the decision tree predicts based on weights = 91.<br>
+
+**Number of Nodes:** 9 (1 root, 4 internal, 5 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical as the root node, indicating high importance (100.00%).<br>
+&nbsp;&nbsp;2. milestones: Significant for further splits, showcasing its relevance (96.61%).<br>
+&nbsp;&nbsp;3. founded_at: Plays a key role in decision-making (55.76%).<br>
+
+In summary, this decision tree, rooted in the “relationships” attribute, efficiently classifies observations based on key features. With 5 terminal nodes, it provides distinct predictions for different paths in the decision-making process. The primary attributes influencing decisions include “relationships,” “milestones,” and “founded_at.” The tree’s structure emphasizes the significance of these features in determining the final status prediction for startups.
+
+### B.3) Testing
+```{r}
+predictions_GR_80 <- predict(C5Fit_80, newdata = test_data_80)
+labels_GR_80 <- test_data_80$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+
+### B.4) Confusion Matrix
+```{r}
+confusion_matrix_GR_80 <- table(test_data_80$status, predictions_GR_80)
+print(confusion_matrix_GR_80)
+```
+The confusion matrix for the provided code indicates the following:<br>
+
+	•	True Positive (TP): 46 cases were correctly predicted as 1.<br>
+	•	False Positive (FP): 12 cases were incorrectly predicted as 1, and 13 cases were incorrectly predicted as 0.<br>
+	•	True Negative (TN): 36 cases were correctly predicted as 0.<br>
+	•	False Negative (FN): 0 cases were incorrectly predicted as 0.<br>
+
+### B.5) Evaluation Metrics
+```{r}
+metrics_GR_80 <- evaluate_model(predictions_GR_80, labels_GR_80)
+```
+• Accuracy (76.64%): This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 76.64%, indicating a relatively high level of correctness.<br>
+
+• Precision (73.47%): Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 73.47%, indicating that when it predicted a positive outcome, it was correct in 73.47% of cases.<br>
+
+• Sensitivity (Recall) (75%): Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 75%, suggesting a good performance in capturing positive instances.<br>
+
+• Specificity (77.97%): Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 77.97%, the model performed well in accurately identifying negative cases.<br>
+
+In summary, the model exhibited high accuracy, precision, and sensitivity. The specificity indicates a good ability to identify negative instances.
+
+### CART Algorithm: Gini Index
+
+### C.1) Constructing the Decision Tree
+```{r}
+library(rpart)
+preprocessed_dataset_ctree_GI_80 <- rpart(status ~ ., data = train_data_80, method = "class", parms = list(split = "gini"))
+```
+The code builds the decision tree model. 
+
+### C.2) Plotting
+```{r}
+print(preprocessed_dataset_ctree_GI_80)
+rpart.plot(preprocessed_dataset_ctree_GI_80)
+```
+
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;• Splitting attribute: “relationships” < 3.5, considering 443 observations with an expected loss of 0.5124153 (51.2% class 0, 48.8% class 1).<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;• Node 2: If “relationships” < 3.5, it predicts class 0 with an expected loss of 0.7764706 (77.6% class 0, 22.4% class 1).<br>
+&nbsp;&nbsp;• Node 4: If “age_last_milestone_year” < 5.5 (under Node 2), it predicts class 0 with an expected loss of 0.8541667 (85.4% class 0, 14.6% class 1). *<br>
+&nbsp;&nbsp;• Node 5: If “age_last_milestone_year” >= 5.5 (under Node 2), it predicts class 1 with an expected loss of 0.3333333 (33.3% class 0, 66.7% class 1). *<br>
+&nbsp;&nbsp;• Node 3: If “relationships” >= 3.5, it predicts class 1 with an expected loss of 0.3479853 (34.8% class 0, 65.2% class 1).<br>
+&nbsp;&nbsp;• Node 6: If “age_last_funding_year” < 0.5 (under Node 3), it predicts class 0 with an expected loss of 0.6086957 (60.9% class 0, 39.1% class 1).<br>
+&nbsp;&nbsp;• Node 12: If “milestones” < 2.5 (under Node 6), it predicts class 0 with an expected loss of 0.8571429 (85.7% class 0, 14.3% class 1). *<br>
+&nbsp;&nbsp;• Node 13: If “milestones” >= 2.5 (under Node 6), it predicts class 1 with an expected loss of 0.2222222 (22.2% class 0, 77.8% class 1). *<br>
+&nbsp;&nbsp;• Node 7: If “age_last_funding_year” >= 0.5 (under Node 3), it predicts class 1 with an expected loss of 0.2951542 (29.5% class 0, 70.5% class 1).<br>
+&nbsp;&nbsp;• Node 14: If “funding_total_usd” < 0.1168035 (under Node 7), it predicts class 1 with an expected loss of 0.4047619 (40.5% class 0, 59.5% class 1).<br>
+&nbsp;&nbsp;• Node 28: Terminal node predicting class 0 (100% class 0, 0% class 1). *<br>
+&nbsp;&nbsp;• Node 29: Terminal node predicting class 1 with an expected loss of 0.4285714 (42.9% class 0, 57.1% class 1). *<br>
+
+**Number of Nodes:** 8 (1 root, 6 internal, 2 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical as the root node, indicating high importance.<br>
+&nbsp;&nbsp;2. age_last_milestone_year: Significant for further splits, showcasing its relevance.<br>
+&nbsp;&nbsp;3. age_last_funding_year: Used for additional splits, emphasizing its contribution.<br>
+
+In summary, this tree utilizes the “relationships” feature for the initial split, followed by additional criteria at each branching point, ultimately leading to predictions at the terminal nodes. The weights associated with each terminal node indicate the number of observations falling into each category. For this tree, n= 443.
+
+### C.3) Testing
+```{r}
+predictions_GI_80 <- predict(preprocessed_dataset_ctree_GI_80, newdata = test_data_80, type = "class")
+labels_GI_80 <- test_data_80$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+### C.4) Confusion Matrix
+```{r}
+confusion_matrix_GI_80 <- table(test_data_80$status, predictions_GI_80)
+print(confusion_matrix_GI_80)
+```
+The confusion matrix for the provided code indicates the following:<br>
+
+	•	True Positive (TP): 46 cases were correctly predicted as 1.<br>
+	•	False Positive (FP): 15 cases were incorrectly predicted as 1, and 13 cases were incorrectly predicted as 0.<br>
+	•	True Negative (TN): 33 cases were correctly predicted as 0.<br>
+	•	False Negative (FN): 0 cases were incorrectly predicted as 0.<br>
+	
+### C.5) Evaluation Metrics
+```{r}
+metrics_GI_80 <- evaluate_model(predictions_GI_80, labels_GI_80)
+```
+• Accuracy (73.83%): This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 73.83%, indicating a relatively high level of correctness.<br>
+
+• Precision (71.74%): Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 71.74%, indicating that when it predicted a positive outcome, it was correct in 71.74% of cases.<br>
+
+• Sensitivity (Recall) (68.75%): Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 68.75%, suggesting a moderate performance in capturing positive instances.<br>
+
+• Specificity (77.97%): Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 77.97%, the model performed well in accurately identifying negative cases.<br>
+
+In summary, the model exhibited high accuracy, and specificity. The precision and sensitivity suggest a reasonable ability to make correct predictions, especially in capturing positive instances.
+
+--------------------------------------------------------------------------------
+
+## Third Partition: (90% training, 10% testing)
+
+#### Partitioning
+```{r}
+set.seed(1234)
+ind <- sample(2, nrow(balanced_preprocessed_dataset), replace=TRUE, prob=c(0.90, 0.10))
+train_data_90 <- balanced_preprocessed_dataset[ind == 1,]
+test_data_90 <- balanced_preprocessed_dataset[ind == 2,]
+```
+The code splits the preprocessed dataset into 90% training data and 10% testing data. 
+
+#### Verify Partitioning
+```{r}
+dim(train_data_90)
+dim(test_data_90)
+```
+The training data consist of 487 rows. 
+The testing data consist of 63 rows.
+
+### A.1) Constructing the Decision Tree
+```{r}
+library(party)
+myFormula <- status ~ state_code + city + name + founded_at + closed_at + first_funding_at + last_funding_at + 
+            age_first_funding_year + age_last_funding_year + age_first_milestone_year + age_last_milestone_year + 
+            relationships + funding_rounds + funding_total_usd + milestones + is_CA + is_NY + is_MA + is_TX + is_otherstate + 
+            category_code + is_software + is_web + is_mobile + is_enterprise + is_advertising + is_gamesvideo + is_ecommerce + 
+            is_biotech + is_consulting + is_othercategory + has_VC + has_angel + has_roundA + has_roundB + has_roundC + 
+            has_roundD + avg_participants + is_top500
+preprocessed_dataset_ctree_IG_90 <- ctree(myFormula, data = train_data_90)
+
+table(predict(preprocessed_dataset_ctree_IG_90), train_data_90$status)
+```
+The code builds the decision tree model. 
+
+### A.2) Plotting
+```{r}
+print(preprocessed_dataset_ctree_IG_90)
+plot(preprocessed_dataset_ctree_IG_90)
+plot(preprocessed_dataset_ctree_IG_90, type = "simple")
+```
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;• Splitting attribute: “relationships” <= 3; criterion = 1, statistic = 85.513, considering 487 observations.<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;• Node 2: If “relationships” <= 3, it proceeds to the next split based on “milestones” <= 2; criterion = 0.999, statistic = 18.362.<br>
+&nbsp;&nbsp;• Node 3: If “milestones” <= 2 and “is_top500” <= 0, it predicts class 0. *<br>
+&nbsp;&nbsp;• Node 5: If “milestones” <= 2 and “is_top500” > 0, it predicts class 1. *<br>
+&nbsp;&nbsp;• Node 6: If “milestones” > 2, it predicts class 1. *<br>
+&nbsp;&nbsp;• Node 7: If “relationships” > 3 and “age_last_milestone_year” <= 0, it predicts class 0. *<br>
+&nbsp;&nbsp;• Node 8: If “relationships” > 3 and “age_last_milestone_year” > 0 and “is_top500” <= 0, it predicts class 0. *<br>
+
+**Leaf Nodes (Terminal Nodes):**<br>
+&nbsp;&nbsp;• Node 4: Terminal node predicting class 0, with weights = 71.<br>
+&nbsp;&nbsp;• Node 5: Terminal node predicting class 1, with weights = 102.<br>
+&nbsp;&nbsp;• Node 6: Terminal node predicting class 1, with weights = 14.<br>
+&nbsp;&nbsp;• Node 8: Terminal node predicting class 0, with weights = 11.<br>
+
+**Number of Nodes:** 9 (1 root, 5 internal, 4 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical as the root node, indicating high importance.<br>
+&nbsp;&nbsp;2. milestones: Significant for further splits, showcasing its relevance.<br>
+&nbsp;&nbsp;3. is_top500: Used for additional splits, emphasizing its contribution.<br>
+
+In summary, this conditional inference tree utilizes “relationships” as the initial split, followed by criteria based on “milestones” and “is_top500” at different branching points. The terminal nodes provide predictions with associated weights reflecting the number of observations. For this tree, n= 487.
+
+### A.3) Testing
+```{r}
+predictions_IG_90 <- predict(preprocessed_dataset_ctree_IG_90, newdata = test_data_90, type = "response")
+labels_IG_90 <- test_data_90$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+
+### A.4) Confusion Matrix
+```{r}
+confusion_matrix_IG_90 <- table(test_data_90$status, predictions_IG_90)
+print(confusion_matrix_IG_90)
+```
+The confusion matrix for the provided code indicates the following:<br>
+
+	•	True Positive (TP): 28 cases were correctly predicted as 0.7197.<br>
+	•	False Positive (FP): 11 cases were incorrectly predicted as 0.2647, 1 case as 0.46, 1 case as 0.6429, 2 cases as 0.07042, and 2 cases as 0.1818.<br>
+	•	True Negative (TN): 6 cases were correctly predicted as 0.07042, 2 cases as 0.1818, and 5 cases as 0.6429.<br>
+	•	False Negative (FN): 1 case was incorrectly predicted as 0.07042 and 5 cases as 0.1818.<br>
+	
+###  A.5) Evaluation Metrics
+```{r}
+metrics_IG_90 <- evaluate_model(predictions_IG_90, labels_IG_90)
+print(metrics_IG_90)
+```
+• Accuracy (9.52%): This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 9.52%, indicating a low level of correctness.<br>
+
+• Precision (85.71%): Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 85.71%, indicating that when it predicted a positive outcome, it was correct in 85.71% of cases.<br>
+
+• Sensitivity (Recall) (75%): Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 75%, suggesting a moderate performance in capturing positive instances.<br>
+
+• Specificity (0%): Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 0%, the model did not perform well in accurately identifying negative cases.<br>
+
+In summary, the model exhibited low accuracy and specificity. The high precision and sensitivity suggest a reasonable ability to make correct predictions, especially in capturing positive instances.
+
+## B) C50 Algorithm: Gain Ratio
+
+## B.1) Constructing the Decision Tree
+```{r}
+library(C50)
+train_data_90$status <- as.factor(train_data_90$status)
+
+C5Fit_90 <- C5.0(status ~ ., data = train_data_90, control = C5.0Control(earlyStopping = FALSE, CF = 0.25))
+summary(C5Fit_90)
+```
+The code builds the decision tree model. 
+
+## B.2) Plotting
+```{r}
+plot(C5Fit_90, type = "simple")
+```
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;•	Splitting attribute: “relationships” <= 3, 487 cases with 34 errors (7.0%).<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;•	Nodes 2-55<br>
+	
+**Leaf Nodes (Terminal Nodes):**
+&nbsp;&nbsp;• Node 28: Terminal node predicting class 0 (100% class 0, 0% class 1).<br>
+&nbsp;&nbsp;• Node 29: Terminal node predicting class 1 (42.9% class 0, 57.1% class 1).<br>
+
+**Number of Nodes:** 7 (1 root, 6 internal, 2 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical as the root node, indicating high importance.<br>
+&nbsp;&nbsp;2. funding_total_usd: Significant for further splits, showcasing its relevance.<br>
+&nbsp;&nbsp;3. milestones: Used for additional splits, emphasizing its contribution.<br>
+
+In summary, this tree utilizes the “relationships” feature for the initial split, followed by additional criteria at each branching point. This hierarchical structure leads to predictions at the terminal nodes, where the weights associated with each terminal node indicate the number of observations falling into each category. The most important features for decision-making are relationships, funding_total_usd, and milestones. If you have any further questions or if there’s anything else I can assist you with, feel free to let me know.
+
+## B.3) Testing
+```{r}
+predictions_GR_90 <- predict(C5Fit_90, newdata = test_data_90)
+labels_GR_90 <- test_data_90$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+## B.4) Confusion Matrix
+```{r}
+confusion_matrix_GR_90 <- table(test_data_90$status, predictions_GR_90)
+print(confusion_matrix_GR_90)
+```
+The confusion matrix for the provided code indicates the following:<br>
+
+	•	True Positive (TP): 26 cases were correctly predicted as 1.<br>
+	•	False Positive (FP): 4 cases were incorrectly predicted as 1, and 11 cases were incorrectly predicted as 0.<br>
+	•	True Negative (TN): 22 cases were correctly predicted as 0.<br>
+	•	False Negative (FN): 11 cases were incorrectly predicted as 0.<br>
+	
+## B.5) Evaluation Metrics
+```{r}
+metrics_GR_90 <- evaluate_model(predictions_GR_90, labels_GR_90)
+```
+• Accuracy (76.19%): This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 76.19%, indicating a relatively high level of correctness.<br>
+
+• Precision (66.67%): Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 66.67%, indicating that when it predicted a positive outcome, it was correct in 66.67% of cases.<br>
+
+• Sensitivity (Recall) (84.62%): Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 84.62%, suggesting a good performance in capturing positive instances.<br>
+
+• Specificity (70.27%): Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 70.27%, the model performed moderately well in accurately identifying negative cases.<br>
+
+In summary, the model exhibited high accuracy and sensitivity. The precision and specificity suggest a reasonable ability to make correct predictions, both in capturing positive instances and identifying negative instances.
+
+
+## C) CART Algorithm: Gini Index
+
+## C.1) Constructing the Decision Tree
+
+```{r}
+library(rpart)
+preprocessed_dataset_ctree_GI_90 <- rpart(status ~ ., data = train_data_90, method = "class", parms = list(split = "gini"))
+```
+The code builds the decision tree model. 
+
+## C.2) Plotting
+```{r}
+print(preprocessed_dataset_ctree_GI_90)
+rpart.plot(preprocessed_dataset_ctree_GI_90)
+```
+**Root Node (Node 1):**<br>
+&nbsp;&nbsp;• Splitting attribute: “relationships” < 3.5, predicting class 0 (51.1% class 0, 48.9% class 1).<br>
+
+**Branches:**<br>
+&nbsp;&nbsp;• Node 2: If “relationships” < 3.5, predicts class 0 (78.1% class 0, 21.9% class 1).<br>
+&nbsp;&nbsp;• Node 4: If “age_last_milestone_year” < 5.5, predicts class 0 (81.9% class 0, 18.1% class 1).<br>
+&nbsp;&nbsp;• Node 8: If “milestones” < 2.5, predicts class 0 (85.0% class 0, 15.0% class 1).<br>
+&nbsp;&nbsp;• Node 9: If “milestones” >= 2.5, predicts class 1 (36.4% class 0, 63.6% class 1).<br>
+&nbsp;&nbsp;• Node 5: If “age_last_milestone_year” >= 5.5, predicts class 1 (37.5% class 0, 62.5% class 1).<br>
+&nbsp;&nbsp;• Node 3: If “relationships” >= 3.5, predicts class 1 (34.3% class 0, 65.7% class 1).<br>
+&nbsp;&nbsp;• Node 6: If “age_last_funding_year” < 0.5, predicts class 0 (61.2% class 0, 38.8% class 1).<br>
+&nbsp;&nbsp;• Node 12: If “milestones” < 2.5, predicts class 0 (83.9% class 0, 16.1% class 1).<br>
+&nbsp;&nbsp;• Node 13: If “milestones” >= 2.5, predicts class 1 (22.2% class 0, 77.8% class 1).<br>
+&nbsp;&nbsp;• Node 7: If “age_last_funding_year” >= 0.5, predicts class 1 (29.1% class 0, 70.9% class 1).<br>
+
+**Leaf Nodes (Terminal Nodes):**<br>
+&nbsp;&nbsp;• Node 8: Predicts class 0 (100% class 0, 0% class 1).<br>
+&nbsp;&nbsp;• Node 9: Predicts class 1 (42.9% class 0, 57.1% class 1).<br>
+
+**Number of Nodes:** 13 (1 root, 11 internal, 2 leaf)<br>
+
+**Most Important Features:**<br>
+&nbsp;&nbsp;1. relationships: Critical for the initial split, indicating high importance.<br>
+&nbsp;&nbsp;2. age_last_milestone_year: Important for further splits.<br>
+&nbsp;&nbsp;3. milestones: Significant for additional distinctions.<br>
+
+In summary, the tree begins with “relationships” as the key factor, followed by criteria like “age_last_milestone_year” and “milestones.” It guides predictions at the terminal nodes, where weights signify observation counts. Critical features are relationships, age_last_milestone_year, and milestones.
+
+## C.3) Testing
+```{r}
+predictions_GI_90 <- predict(preprocessed_dataset_ctree_GI_90, newdata = test_data_90, type = "class")
+labels_GI_90 <- test_data_90$status
+```
+The code generates predictions for the test dataset using the decision tree model.
+
+## C.4) Confusion Matrix
+```{r}
+confusion_matrix_GI_90 <- table(test_data_90$status, predictions_GI_90)
+print(confusion_matrix_GI_90)
+```
+The confusion matrix for the provided code indicates the following:<br>
+
+	•	True Positive (TP): 31 cases were correctly predicted as 1.<br>
+	•	False Positive (FP): 8 cases were incorrectly predicted as 1, and 6 cases were incorrectly predicted as 0.<br>
+	•	True Negative (TN): 18 cases were correctly predicted as 0.<br>
+	•	False Negative (FN): 6 cases were incorrectly predicted as 0.<br>
+
+## C.5) Evaluation Metrics
+```{r}
+metrics_GI_90 <- evaluate_model(predictions_GI_90, labels_GI_90)
+```
+• Accuracy (77.78%): This metric represents the overall correctness of the model’s predictions. In this case, the model achieved an accuracy of 77.78%, indicating a relatively high level of correctness.<br>
+
+• Precision (75%): Precision measures the accuracy of positive predictions. In this context, the model achieved a precision of 75%, indicating that when it predicted a positive outcome, it was correct in 75% of cases.<br>
+
+• Sensitivity (Recall) (69.23%): Sensitivity, also known as recall, measures the ability of the model to correctly identify positive instances. In this case, the model’s sensitivity is 69.23%, suggesting a moderate performance in capturing positive instances.<br>
+
+• Specificity (83.78%): Specificity measures the ability of the model to correctly identify negative instances. With a specificity of 83.78%, the model performed well in accurately identifying negative cases.<br>
+
+In summary, the model exhibited high accuracy and specificity. The precision and sensitivity suggest a reasonable ability to make correct predictions, both in capturing positive instances and identifying negative instances.<br>
+
+
+
+## 5.2-Clustering 
+
+Contrary to classification, **clustering is a form of unsupervised learning, where there is no predefined class label**. However, in the startup data, the class attribute is already known which is the "status". Status attribute holds two values, either "acquired" status, or "closed" status. If the class attribute is known, then what is the use clustering? It is still beneficial for exploratory data analysis to discover the unseen structure or pattern in the data set, findings of anomalies, visualizing the data set and even assessing the quality of the clustering algorithm.
+
+We will use **k-means as our partitioning method**. K-means clustering is recommended for its simplicity, efficiency, and effectiveness in partitioning data into distinct groups based on similarities. It’s computationally efficient. The main goal is to partition into k numbers of clusters, where each data point belongs to the cluster with the nearest means. **We chose k= 2, 3 and 4** to see what are the differences in the patterns of each k clusters and why their qualities differ from each other.
+
+```{r}
+library(readxl)
+preprocessed_dataset <- read_excel("Preprocessed_StartupData.xlsx")
+```
+To work on the preprocessed dataset. 
+
+```{r}
+library(dplyr)
+preprocessed_dataset.features = preprocessed_dataset %>% select(age_first_funding_year,age_last_funding_year,age_first_milestone_year,age_last_milestone_year,relationships,funding_rounds,funding_total_usd,milestones,has_VC,has_angel,has_roundA,has_roundB,has_roundC,has_roundD,avg_participants,is_top500)
+View(preprocessed_dataset.features)
+```
+First, we selected and transferred some columns from dataset to another dataset (preprocessed_dataset.features) to make it easier to cluster.
+
+```{r}
+# Run k-means to find different number of clusters after omitting NA
+
+library(ClusterR)
+library(cluster)
+set.seed(500)
+kmeanResults<-kmeans(na.omit(preprocessed_dataset.features), 2)
+kmeanResults
+
+kmeanResults2<-kmeans(na.omit(preprocessed_dataset.features), 3)
+kmeanResults2
+
+kmeanResults3<-kmeans(na.omit(preprocessed_dataset.features), 4)
+kmeanResults3
+```
+As said, the previous codes are to find k-mean clusters. k= 2, 3, 4 (shown in different color red in the code). In the next code snippet, you can visualize all the 2-means, 3-means and 4-means clusters.
+
+```{r}
+#Visualization of all the clusters we made in the previous code snippet. 
+
+library(factoextra)
+fviz_cluster(kmeanResults, data = na.omit(preprocessed_dataset.features))
+
+fviz_cluster(kmeanResults2, data = na.omit(preprocessed_dataset.features))
+
+fviz_cluster(kmeanResults3, data = na.omit(preprocessed_dataset.features))
+```
+As shown, all 2-means, 3-means and 4-means clusters are overlapping. Clusters may overlap when the data doesn’t have clear boundaries or when chosen features struggle to distinguish groups effectively. If clusters are closely related or share similarities, traditional methods may find it hard to create distinct divisions. The sensitivity of algorithms to initial conditions and the subjective nature of defining clusters can also contribute to overlaps. Essentially, overlapping clusters reveal the complexity in the data, indicating the need for alternative methods or a reevaluation of feature choices to better capture underlying patterns. 
+
+### A) Silhoutte Method
+
+Silhouette method is an unsupervised method to assess the quality of the clusters. If a silhouette score is \>=0.5, it means the clustering is fairly good. Ideal clustering has silhouette score = 1 while if the silhouette score is less than 0, it means wrong clustering and the sample is assigned to the wrong cluster. The Silhouette Coefficient is calculated using the mean intra-cluster distance (a) and the mean nearest-cluster distance (b) for each sample. The Silhouette score for a sample is (b - a) / max(a,b). The Silhouette width is the average of Silhouette Coefficient accross all data points in a dataset and is sometimes used interchangeably with each other.
+
+```{r}
+#Silhouette method
+#For 2-mean cluster and their plots
+silhouette_scores<-silhouette(kmeanResults$cluster, dist(na.omit(preprocessed_dataset.features)))
+plot(silhouette_scores)
+
+#For 3-mean cluster and their plots
+silhouette_scores<-silhouette(kmeanResults2$cluster, dist(na.omit(preprocessed_dataset.features)))
+plot(silhouette_scores)
+
+#For 4-mean cluster and their plots
+silhouette_scores<-silhouette(kmeanResults3$cluster, dist(na.omit(preprocessed_dataset.features)))
+plot(silhouette_scores)
+
+#This is to plot the optimal K-clusters.
+fviz_nbclust(na.omit(preprocessed_dataset.features), kmeans, method = "silhouette")
+```
+
+As you can on top, each silhouette width denoted by Si of a k-means cluster is averaged (Average silhouette width shown in the silhouette plot) and plotted on to the optimal number of cluster plot.
+
+For example, in the silhouette plot for 2-means cluster, the silhouette coefficient (or width) is 0.29 for one cluster and 0.34 for the other cluster. When they are averaged, Average silhouette width is about 0.33. The same goes for silhouette plots for 3-means cluster (Average silhouette width = (0.29+0.31+0.21)/3= 0.27) and 4-means cluster (Average silhouette width = (0.22+0.17+0.19+0.28)/4= 0.22). This is done for many other k clusters. Then the average silhouette width is plotted accordingly onto the optimal number of clusters graph. The highest silhouette width indicates the optimal number of clusters because it is the least overlapping. In our optimal number of clusters graph, it shows that optimal number of clusters is 2. As you can see with the values of the silhouette scores, they are all less than 0.5 but greater than 0, which means the clusters must be very overlapping just like how the clustering results are shown.
+
+### B) Total Within-Cluster Sum of Square
+
+The total within-cluster sum of square (WSS) is the sum of squared distances between each data point in a cluster and the centroid of that cluster, and then sum of these values across all clusters. The objective of the k-means algorithm is to find cluster assignments and centroids that minimize this total within-cluster sum of squares.Total Within-Cluster is found to be plotted on a graph to find the optimal numbers of cluster where the turning point is. This method is called an Elbow Method.
+
+```{r}
+#Total Within-cluster sum of squares
+#For 2-mean cluster
+kmeanResults$tot.withinss
+#For 3-mean cluster
+kmeanResults2$tot.withinss
+#For 4-mean cluster
+kmeanResults3$tot.withinss
+
+#Elbow method found by plotting total WSS for each k-mean clusters.
+fviz_nbclust(na.omit(preprocessed_dataset.features), kmeans, method = "wss")
+```
+
+In the graph above, it shows that the turning point is 2 which also shows that 2-mean clusters is the optimal number of clusters. The total sum of within is 20779.84 and we can see it decreases from that point making it the turning point of this graph. Again, this is called Elbow method.
+
+### C) BCubed Precision and Recall
+
+Precision indicates the purity of a cluster. The higher the precision, the higher the purity of the cluster. Recall indicates how good the data points of same true class are put into same cluster. Below shows the steps to prepare for calculating BCubed Precision and Recall.
+
+```{r}
+
+#Add status back to Data.features as we removed it for easiness
+preprocessed_dataset.features=bind_cols(preprocessed_dataset.features,preprocessed_dataset['status'])
+
+#Omitting NA rows since we clustered with NA values
+preprocessed_dataset.features=na.omit(preprocessed_dataset.features)
+
+#Find BCubed Precision and Recall
+
+#1- Find number of item in cluster
+
+kmeanResults$size
+kmeanResults2$size
+kmeanResults3$size
+```
+
+The 1st result shows that in the 2-means cluster, there are 2 clusters with respective number of items: 219 and 508. The 2nd result shows that in the 3-means cluster, there are 3 clusters with respective number of items: 190, 321 and 216. The 3rd result shows that in the 4-means cluster, there are 4 clusters with respective number of items: 113, 166, 200 and 248.
+
+In the code below, we started the steps of calculating the BCubed Precision first based on acquired items which are encoded as status ='1'. As explained not too long before, the BCubed Precision is a measure of the purity of a cluster. Purity means in our case, the more 'acquired' class labels are grouped together, the purer that cluster will be. If a cluster only consists of acquired items, it means the cluster has 100% precision or is 100% pure. BCubed Precision is calculated as number of acquired items divided by the total number of items in the cluster.
+
+```{r}
+#3- Calculate the BCubed Precision
+#BCubedPrecision = NumberOfAcquiredItems/TotalNumberOfItemsInCluster
+
+#3.1: Precision of acquired in 2-mean clusters after finding out how many acquired items are in each cluster
+
+TotalNumberOfItemsInCluster1=219 #Total Number of Items in Cluster 1 as found and explained in the previous code snippet.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 1 of 2-means cluster 
+acquired2Clust1<-print(sum(preprocessed_dataset.features$status[kmeanResults$cluster =="1"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired2Clust1*100/TotalNumberOfItemsInCluster1)
+
+TotalNumberOfItemsInCluster=508 #Total Number of Items in Cluster 2 as found and explained in the previous code snippet.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 2 of 2-means cluster
+acquired2Clust2<-print(sum(preprocessed_dataset.features$status[kmeanResults$cluster =="2"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired2Clust2*100/TotalNumberOfItemsInCluster)
+```
+
+### Results of 2-means clustering BCubed Precision for 2 clusters
+
+| Cluster No    | No Of Items | No Of Acquired Items | BCubed Precision |
+|---------------|-------------|----------------------|------------------|
+| **Cluster 1** | 219         | 186                  | 84.93151%        |
+| **Cluster 2** | 508         | 266                  | 52.3622%         |
+
+Cluster 1 is mostly pure as its precision is high while Cluster 2 is not pure as its precision is close to half which means it is almost equally mixed with acquired items and closed items.
+
+```{r}
+#3.1: Precision of acquired in 3-mean clusters after finding out how many acquired items are in each cluster
+
+
+TotalNumberOfItemsInCluster=190 #Total No of Items in Cluster 1 as found and explained in the code snippet before BCubed.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 1 of 3-means cluster
+acquired3Clust1<-print(sum(preprocessed_dataset.features$status[kmeanResults2$cluster =="1"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired3Clust1*100/TotalNumberOfItemsInCluster)
+
+TotalNumberOfItemsInCluster=321 #Total No of Items in Cluster 2 as found and explained in the code snippet before BCubed.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 2 of 3-means cluster
+acquired3Clust2<-print(sum(preprocessed_dataset.features$status[kmeanResults2$cluster =="2"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired3Clust2*100/TotalNumberOfItemsInCluster)
+
+TotalNumberOfItemsInCluster=216 #Total No of Items in Cluster 3 as found and explained in the code snippet before BCubed.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 3 of 3-means cluster
+acquired3Clust3<-print(sum(preprocessed_dataset.features$status[kmeanResults2$cluster =="3"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired3Clust3*100/TotalNumberOfItemsInCluster)
+
+```
+
+### Results of 3-means clustering BCubed Precision for 3 clusters
+
+| Cluster No    | No Of Items | No Of Acquired Items | BCubed Precision |
+|---------------|-------------|----------------------|------------------|
+| **Cluster 1** | 190         | 164                  | 86.31579%        |
+| **Cluster 2** | 321         | 156                  | 48.59813%        |
+| **Cluster 3** | 216         | 132                  | 61.11111%        |
+
+Cluster 1 is mostly pure as precision is high. Cluster 2 is not pure at all as it is almost equally mixed with acquired and closed items. Cluster 3 is a little bit pure as it is more acquired items but not by a high percentage of precision.
+
+```{r}
+#3.1: Precision of acquired in 4-mean clusters after finding out how many acquired items are in each cluster
+
+TotalNumberOfItemsInCluster=113 #Total No of Items in Cluster 1 as found and explained in the code snippet before BCubed.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 1 of 4-means cluster
+acquired4Clust1<-print(sum(preprocessed_dataset.features$status[kmeanResults3$cluster =="1"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired4Clust1*100/TotalNumberOfItemsInCluster)
+
+TotalNumberOfItemsInCluster=166 #Total No of Items in Cluster 2 as found and explained in the code snippet before BCubed.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 2 of 4-means cluster
+acquired4Clust2<-print(sum(preprocessed_dataset.features$status[kmeanResults3$cluster =="2"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired4Clust2*100/TotalNumberOfItemsInCluster)
+
+TotalNumberOfItemsInCluster=200 #Total No of Items in Cluster 3 as found and explained in the code snippet before BCubed.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 3 of 4-means cluster
+acquired4Clust3<-print(sum(preprocessed_dataset.features$status[kmeanResults3$cluster =="3"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired4Clust3*100/TotalNumberOfItemsInCluster)
+
+TotalNumberOfItemsInCluster=248 #Total No of Items in Cluster 4 as found and explained in the code snippet before BCubed.
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 4 of 4-means cluster
+acquired4Clust4<-print(sum(preprocessed_dataset.features$status[kmeanResults3$cluster =="4"]== "1", na.rm = TRUE))
+#Result of BCubed Precision
+print(acquired4Clust4*100/TotalNumberOfItemsInCluster)
+```
+
+### Results of 4-means clustering BCubed Precision for 4 clusters
+
+| Cluster No    | No Of Items | No Of Acquired Items | BCubed Precision |
+|---------------|-------------|----------------------|------------------|
+| **Cluster 1** | 113         | 101                  | 89.38053%        |
+| **Cluster 2** | 166         | 125                  | 75.30120%        |
+| **Cluster 3** | 200         | 124                  | 62.00000%        |
+| **Cluster 4** | 248         | 102                  | 41.12903%        |
+
+Cluster 1 is almost pure as it has a good amount of precision. Cluster 2 is fairly pure. Cluster 3 is a little bit pure but with a high percentage of precision. Cluster 4 is not pure at all. Rather the precision indicates that the number of acquired items is lower than the number of closed items in this cluster.
+
+In the code below, we started the steps of calculating the BCubed Recall also based on acquired items which are encoded as status ='1'. The BCubed Recall indicates how good the data points of same true class are put into same cluster. In our case, it is how good the acquired data points are put into the same cluster as other acquired data points. Therefore the better the recall is, the more it shows that acquired data points are put together. We calculated BCubed Recall as number of acquired items in the cluster divided by total number of acquired items in the whole dataset.
+
+```{r}
+#4- Calculate the BCubed Recall
+#BCubedRecall = NumberOfAcquiredItemsInCluster/TotalAcquiredItemsInDataset
+
+#4.1- Find the number of all the rows with acquired in the class by filtering '1' in the dataset.features and seeing how many entries.
+# Note that we have encoded class label 'acquired' to '1' for easy change. 
+TotalAcquiredItemsInDataset = print(sum(preprocessed_dataset.features$status == "1", na.rm = TRUE))
+#Number of 'acquired'= 452 rows
+
+#4.2: Recall of acquired in 2-mean clusters
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 1 of 2-means cluster 
+acquired2Clust1<-print(sum(preprocessed_dataset.features$status[kmeanResults$cluster =="1"]== "1", na.rm = TRUE))
+Recall1Clust1= print(acquired2Clust1*100/TotalAcquiredItemsInDataset) 
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 2 of 2-means cluster
+acquired2Clust2<-print(sum(preprocessed_dataset.features$status[kmeanResults$cluster =="2"]== "1", na.rm = TRUE))
+Recall1Clust2= print(acquired2Clust2*100/TotalAcquiredItemsInDataset)
+```
+
+Note that the first result is the total number of acquired items in the whole dataset. \### Results of 2-means clustering BCubed Recall for 2 cluster
+
+| Cluster No    | No of acquired Items | BCubed Recall |
+|---------------|----------------------|---------------|
+| **Cluster 1** | 186                  | 41.15044%     |
+| **Cluster 2** | 266                  | 58.84959%     |
+
+For Cluster 1, the BCubed Recall is low which means only less than half of the acquired items are together in this cluster. In Cluster 2, the BCubed Recall is also low however a little more than half of the acquired items are in this cluster.
+
+```{r}
+#BCubedRecall = NumberOfAcquiredItemsInCluster/TotalAcquiredItemsInDataset
+
+#4.1- Find the number of all the rows with acquired in the class by filtering '1' in the dataset.features and seeing how many entries.
+# Note that we have encoded class label 'acquired' to '1' for easy change. 
+TotalAcquiredItemsInDataset = print(sum(preprocessed_dataset.features$status == "1", na.rm = TRUE))
+#Number of 'acquired'= 452 rows
+
+#4.3: Recall of acquired in 3-mean clusters 
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 1 of 3-means cluster
+acquired3Clust1<-print(sum(preprocessed_dataset.features$status[kmeanResults2$cluster =="1"]== "1", na.rm = TRUE))
+Recall3Clust1= print(acquired3Clust1*100/TotalAcquiredItemsInDataset) 
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 2 of 3-means cluster
+acquired3Clust2<-print(sum(preprocessed_dataset.features$status[kmeanResults2$cluster =="2"]== "1", na.rm = TRUE))
+Recall3Clust2= print(acquired3Clust2*100/TotalAcquiredItemsInDataset)
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 3 of 3-means cluster
+acquired3Clust3<-print(sum(preprocessed_dataset.features$status[kmeanResults2$cluster =="3"]== "1", na.rm = TRUE))
+Recall3Clust3= print(acquired3Clust3*100/TotalAcquiredItemsInDataset)
+```
+
+Note that TotalAcquiredItemsInDataset is the total number of acquired items in the whole dataset.
+
+### Results of 3-means clustering BCubed Recall for 3 cluster
+
+| Cluster No    | No of acquired Items | BCubed Recall |
+|---------------|----------------------|---------------|
+| **Cluster 1** | 164                  | 36.28319%     |
+| **Cluster 2** | 156                  | 34.51327%     |
+| **Cluster 3** | 132                  | 29.20354%     |
+
+In Cluster 1, 2 and 3, the BCubed Recall is very low which means the acquired items are not well put together in any of the clusters.This may also indicate that 3-mean clustering does not have a good quality.
+
+```{r}
+#BCubedRecall = NumberOfAcquiredItemsInCluster/TotalAcquiredItemsInDataset
+
+#4.1- Find the number of all the rows with acquired in the class by filtering '1' in the dataset.features and seeing how many entries.
+# Note that we have encoded class label 'acquired' to '1' for easy change. 
+TotalAcquiredItemsInDataset = print(sum(preprocessed_dataset.features$status == "1", na.rm = TRUE))
+#Number of 'acquired'= 452 rows
+
+#4.4: Recall of acquired in 4-mean clusters 
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 1 of 4-means cluster
+acquired4Clust1<-print(sum(preprocessed_dataset.features$status[kmeanResults3$cluster =="1"]== "1", na.rm = TRUE))
+Recall4Clust1= print(acquired4Clust1*100/TotalAcquiredItemsInDataset) 
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 2 of 4-means cluster
+acquired4Clust2<-print(sum(preprocessed_dataset.features$status[kmeanResults3$cluster =="2"]== "1", na.rm = TRUE))
+Recall4Clust2= print(acquired4Clust2*100/TotalAcquiredItemsInDataset)
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 3 of 4-means cluster
+acquired4Clust3<-print(sum(preprocessed_dataset.features$status[kmeanResults3$cluster =="3"]== "1", na.rm = TRUE))
+Recall4Clust3= print(acquired4Clust3*100/TotalAcquiredItemsInDataset)
+
+# This code down below calculates the number of acquired items (encoded as '1') in Cluster 4 of 4-means cluster
+acquired4Clust4<-print(sum(preprocessed_dataset.features$status[kmeanResults3$cluster =="4"]== "1", na.rm = TRUE))
+Recall4Clust4= print(acquired4Clust4*100/TotalAcquiredItemsInDataset)
+```
+
+Note that TotalAcquiredItemsInDataset is the total number of acquired items in the whole dataset. Results of 4-means clustering BCubed Recall for 4 cluster
+
+| Cluster No    | No of acquired Items | BCubed Recall |
+|---------------|----------------------|---------------|
+| **Cluster 1** | 101                  | 22.34513%     |
+| **Cluster 2** | 125                  | 27.65487%     |
+| **Cluster 3** | 124                  | 27.43363%     |
+| **Cluster 4** | 102                  | 22.56637%     |
+
+In Cluster 1, 2, 3 and 4, the BCubed Recall is very low, so none of the acquired items are well put together. This may also indicate that 4-mean clustering does not have a good quality.
+
+# 6-Evaluation and Comparison 
+
+## 6.1-Classification 
+
+|             |70:30  |70:30    |70:30      | 80:20  | 80:20    | 80:20      | 90:10  | 90:10    | 90:10      |
+| ----------- | ------ | -------- | ---------- | ------ | -------- | ---------- | ------ | -------- | ---------- |
+|             | **IG**     | **IG Ratio** | **Gini Index** | **IG**     | **IG Ratio** | **Gini Index** | **IG**     | **IG Ratio** | **Gini Index** |
+| Accuracy    | 11.2%  | 67.46%   |  **79.29%**     | 26.17% | 76.64%   | 73.83%     | 9.52%  | 76.19%   | 77.78%     |
+| Precision   | 100 %  | 64%      | 84.75%     | 85.19% | 73.47%   | 71.74%     | 85.71% | 66.67%   | 69.23%     |
+| Sensitivity | 34.2 % | 63.16%   | 65.79%     | 74.19% | 75%      | 68.75%     | 75%    | 84.62%   | 69.23%     |
+| Specificity | 100 %  | 70.97%   | 90.32%     | 55.56% | 77.97%   | 77.97%     | 0%     | 70.27%   | 83.78%     |
+
+1.	**Information Gain (IG) and Gini Index:** Higher values for IG and lower values for the Gini Index are desirable. For 70:30 split, Gini Index has the lowest value (79.29%), indicating better separation.
+2.	**Accuracy, Precision, Sensitivity, and Specificity:** Higher accuracy, precision, sensitivity, and specificity are desired. For 70:30 split, Gini Index achieves the highest accuracy (79.29%), precision (84.75%), sensitivity (65.79%), and specificity (90.32%).
+
+We evaluated the performance of Information Gain, Gain Ratio, and Gini Index across three partitions (70:30, 80:20, and 90:10) by calculating accuracy, precision, sensitivity, and specificity. With a balanced dataset, we relied on accuracy as the primary metric to judge algorithm performance. The Gini Index for the 70:30 partition emerged as the best-performing algorithm, emphasizing that more nodes don’t necessarily lead to better accuracy. Despite having only 8 nodes and testing three features, the Gini Index achieved superior accuracy.
+
+Across the three partitions, Information Gain yielded the lowest average accuracy (15.63%), while Gain Ratio showed an average accuracy of 73.43%. Notably, the Gini Index outperformed both, boasting an average accuracy of 76.97%. In addition, the 70:30 split struck a balance that resulted in the best accuracy, as observed through the Gini Index, Information Gain, and Gain Ratio. 
+
+**Considering these factors, the 70:30 split with Gini Index is the most optimal choice for classification.**
+
+
+## 6.2-Clustering 
+
+|                                        | K = 2                                            | K = 3                                            | K = 4                                            |
+|------------------|------------------|------------------|------------------|
+| **Average Silhouette width**           | 0.33                                             | 0.27                                             | 0.22                                             |
+| **Total within-cluster sum of square** | 20779.84                                         | 16170.31                                         | 14458.25                                         |
+| **BCubed precision**                   | 68.6%                                            | 65.3%                                            | 66.9%                                            |
+| **BCubed recall**                      | 50.0%                                            | 33.3%                                            | 25%                                              |
+| **Visualization**                      | ![](/Users/basmaalsulaim/Desktop/images/2-means.png) | ![](/Users/basmaalsulaim/Desktop/images/3-means.png) | ![](/Users/basmaalsulaim/Desktop/images/4-means.png) |
+
+
+1.	**Average Silhouette Width:** Higher values are better, indicating better-defined clusters. Therefore, for K = 2, it has the highest value (0.33), suggesting better separation. 
+2.	**Total Within-Cluster Sum of Square:** Lower values are better, indicating compact clusters. K = 4 has the lowest value (14458.25). 3.	**BCubed Precision and Recall:** Higher precision and recall are desirable. Looking at K = 2, it has a good balance between precision (68.6%) and recall (50%). 
+
+**Considering these factors, 2-means seems to be the most optimal choice for clustering.**
+
+
+# 7-Results and Findings  
+
+To summarize:<br> 
+
+**•	Best Clustering Algorithm: K-means with K = 2.**<br>
+**•	Best Classification Algorithm: Decision tree with a 70:30 split using the Gini Index.** 
+
+For a small dataset with 727 rows, the choice between the clustering algorithm (K-means with K = 2) and the classification algorithm (Decision tree with Gini Index, 70:30 split) depends on several factors: 
+
+1.	**Size of the Dataset:** K-means can be computationally efficient for startup dataset which is small. However, decision trees, especially with a limited depth, can also handle smaller datasets effectively. 
+
+2.	**Nature of the Data:** Because the startup data doesn't form distinct clusters, K-means is not recommended. However, there are clear patterns and relationships between features that was captured by the 70:30 decision tree. 
+
+3.	**Interpretability:** Decision trees are often more interpretable, providing insights into the decision-making process, which can be valuable in understanding the data. 
+
+4.	**Computational Resources:** K-means is generally computationally efficient, but the dataset size is still relatively small. 
+
+Given these considerations, because interpretability and understanding the decision process are important, and the startup dataset is not extremely large, the **Decision Tree with Gini Index and a 70:30 split the ideal choice for the startup dataset.**
