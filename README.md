@@ -1,7 +1,7 @@
 # IT326 Project | Startup Success Prediction Model
 
 
-> **Students:** Basma Alsulaim – Aafia Nawal Mohammed.
+> **Students:** Basma Alsulaim (441200595) – Aafia Nawal Mohammed (443203869).
 
 
 ## Startup Success Prediction Model
